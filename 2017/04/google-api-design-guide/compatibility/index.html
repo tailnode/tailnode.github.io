@@ -1,0 +1,1155 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="VYvdNdoeRCKzwBkNBludJVrQrnTHRTJKMRI4BZt86Ac">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="架构,翻译,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="翻译自 API Design Guide - Compatibility  本章提供了有关版本控制部分中给出的破坏和保持兼容性修改的详细说明。">
+<meta name="keywords" content="架构,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google API 设计指南－兼容性">
+<meta property="og:url" content="http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/index.html">
+<meta property="og:site_name" content="tailnode 的博客">
+<meta property="og:description" content="翻译自 API Design Guide - Compatibility  本章提供了有关版本控制部分中给出的破坏和保持兼容性修改的详细说明。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google API 设计指南－兼容性">
+<meta name="twitter:description" content="翻译自 API Design Guide - Compatibility  本章提供了有关版本控制部分中给出的破坏和保持兼容性修改的详细说明。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'YAFGFO8GJT',
+      apiKey: 'f12750d1095dc6fb0c46a02f55dcd878',
+      indexName: 'hexo',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"在这里输入要搜索的内容","hits_empty":"没有 ${query} 的相关内容","hits_stats":"找到 ${hits} 条结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/">
+
+
+
+
+
+  <title> Google API 设计指南－兼容性 | tailnode 的博客 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2147b40a1ceec3a2fcebb5dc4cb67c50";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tailnode 的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">给岁月以文明，而不是给文明以岁月</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="输入搜索内容..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Google API 设计指南－兼容性
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-20T21:46:00+08:00">
+                2017-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/04/google-api-design-guide/compatibility/" class="leancloud_visitors" data-flag-title="Google API 设计指南－兼容性">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>翻译自 <a href="https://cloud.google.com/apis/design/compatibility" target="_blank" rel="noopener">API Design Guide - Compatibility</a></p>
+</blockquote>
+<p>本章提供了有关<a href="http://tailnode.github.io/2017/04/google-api-design-guide/versioning/">版本控制</a>部分中给出的破坏和保持兼容性修改的详细说明。</p>
+<a id="more"></a>
+<p>并不总是绝对清楚什么是不兼容的修改，这篇指南 <strong>应该（should）</strong> 被当成参考性的，而不是覆盖到所有情况。</p>
+<p>下面列出的这些规则只涉及客户端兼容性，默认 API 作者了解部署（包括实现细节的变化）的需求。</p>
+<p>一般的目标是服务端升级 minor 或 patch 不能影响客户端的兼容性：</p>
+<ul>
+<li>代码兼容：针对 1.0 编写的代码在 1.1 上编译失败</li>
+<li>二进制兼容：针对 1.0 编译的代码与 1.1 客户端的库链接/运行失败（具体的细节依赖客户端，不同情况有不同变化）</li>
+<li>协议兼容：针对 1.0 构建的程序与 1.1 服务端通信失败</li>
+<li>语义兼容：所有组件都能运行但产生意想不到的结果</li>
+</ul>
+<p>简而言之：旧的客户端应该与相同 major 版本的新服务端正常工作，并且能够轻松地升级到新的 minor 版本。</p>
+<p>由于客户端使用了自动生成和手写的代码，除了理论上的基于协议的考虑，还有一些实际的问题。通过生成新版本的客户端库来测试你的修改，并保证测试通过。</p>
+<p>下面的讨论将 proto 信息分为三类：</p>
+<ul>
+<li>请求信息（例如 <code>GetBookRequest</code>）</li>
+<li>响应信息（例如 <code>ListBooksResponse</code>）</li>
+<li>资源信息（例如 <code>Book</code>，包括在其他资源消息中使用的任何消息）</li>
+</ul>
+<p>这三类有不同的规则，例如请求信息只会从客户端发送到服务端，响应信息只会从服务端发送到客户端，但资源信息一般会在两者之间互相发送。尤其是可被修改的资源需要根据读取/修改/写入的循环来考虑。</p>
+<h1>保持向后兼容的修改</h1>
+<h2 id="向-api-服务中添加-api-接口">向 API 服务中添加 API 接口</h2>
+<p>从协议的角度看，这种修改总是安全的。唯一需要考虑的是客户端库可能已经通过手写的代码使用了新 API 接口的名字。如果新接口与其它完全正交，这种情况不太可能发生。如果是已存接口的简化版本，则很可能引起冲突。</p>
+<h2 id="向-api-接口中添加方法">向 API 接口中添加方法</h2>
+<p>除非添加了一个与现有客户端库中方法冲突的方法，这种修改没有问题。</p>
+<p>一个会破坏兼容性的例子：如果有 <code>GetFoo</code> 方法，C# 代码生成器已经创建了 <code>GetFoo</code> 和 <code>GetFooAsync</code> 方法。因此从客户端角度来看，在 API 接口中添加 <code>GetFooAsync</code> 方法将会破坏兼容性。</p>
+<h2 id="向方法添加-http-绑定">向方法添加 HTTP 绑定</h2>
+<p>假设绑定没有引入任何歧义，使服务端响应以前被拒绝的 URL 是安全的。当将现有操作应用于新的资源名称时，<strong>可能（may）</strong> 会这样做。</p>
+<h2 id="向请求信息添加字段">向请求信息添加字段</h2>
+<p>添加请求字段可以是兼容的，只要不指定该字段的客户端在新版本中与旧版本表现相同。</p>
+<p>会导致错误的最明显例子是分页：如果 API 的 v1.0 版本不支持，除非 <code>page_size</code> 默认值是无穷大（这样是不好的）才能在 v1.1 中加入分页。否则 v1.0 的客户端原本希望通过一次请求取得所有结果，但实际只能取到一部分。</p>
+<h2 id="向响应信息添加字段">向响应信息添加字段</h2>
+<p>只要不改变其他响应字段的行为，就可以扩展不是资源的响应消息（例如ListBooksResponse），而不会破坏兼容性。即使导致冗余，任何在旧的响应消息中的字段也应该存在于新的响应中并保持它原来的语义。</p>
+<p>例如，1.0 中的一个查询请求的响应有 bool 类型的字段 <code>contained_duplicates</code> 来指示因为重复而忽略掉的结果。在 1.1 中，我们在 <code>duplicate_count</code> 字段中提供更详细的信息，尽管从 1.1 版本来看是多余的，但 <code>contained_duplicates</code> 字段 <strong>必须（must）</strong> 要保留。</p>
+<h2 id="向枚举添加值">向枚举添加值</h2>
+<p>只在请求信息中使用的枚举类型可以自由扩展来添加新元素。例如，使用<a href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/#%E8%B5%84%E6%BA%90%E8%A7%86%E5%9B%BE">资源视图</a>时，新的视图能够添加到新 minor 版本中。客户端从来不需要接收此枚举，所以也不需要关心它。</p>
+<p>对于资源消息和响应消息，默认假设客户端应该处理它意识不到的枚举值。但是 API 作者应该意识到编写能够正确处理新枚举值的代码可能是困难的。<strong>应该（should）</strong> 在文档中记录当遇到未知枚举值时客户端的期望行为。</p>
+<p>proto3 允许客户端接收它们不关心的值并且当执行重新序列化消息时会保持值不变，所以这样就不会打破读取/修改/写入循环的兼容性。JSON 格式允许发送数值，其中该值的“名称”是未知的，但是服务端通常不会知道客户端是否真正知道特定值。因此 JSON 客户端可能知道它们已经收到了以前对他们未知的值，但他们只会看到名称或数字而不是两个都有。在读取/修改/写入循环中将相同的值返回给服务端不应该修改这个值，因为服务端应该理解这两种形式。</p>
+<h2 id="添加只输出-output-only-的资源字段">添加只输出（output-only）的资源字段</h2>
+<p><strong>可以（may）</strong> 添加仅由服务端提供的资源实体中的字段。服务端 <strong>可以（may）</strong> 验证请求中的值是否有效，但是如果该值被省略则 <strong>一定不能（must not）</strong> 失败。</p>
+<h1>破坏向后兼容的修改</h1>
+<h2 id="删除-重命名服务-接口-字段名-方法或枚举值">删除/重命名服务、接口、字段名、方法或枚举值</h2>
+<p>从根本上说，如果客户端代码使用了某些字段，那么删除或重命名它将会破坏兼容性，并且 <strong>必须（must）</strong> 增加 major 版本号。引用旧名称的一些语言（如 C# 和 Java）在编译时会失败， 另一些语言会引起运行时异常或数据丢失。协议格式的兼容性在这里是无关紧要的。</p>
+<h2 id="修改-http-绑定">修改 HTTP 绑定</h2>
+<p>这里的<code>修改</code>实际指<code>删除</code>和<code>添加</code>。例如，你想要支持 PATCH，但已发布的版本支持 PUT，或者已经使用了错误的自定义动词，你 <strong>可以（may）</strong> 添加新的绑定，但是 <strong>一定不要（must not）</strong> 移除旧的，因为和删除服务的方法一样会破坏兼容性。</p>
+<h2 id="修改字段类型">修改字段类型</h2>
+<p>尽管新类型是协议兼容的，能够改变客户端库自动生成的代码，因此 <strong>必须（must）</strong> 要升级 major 版本。会导致需要编译的静态类型的语言在编译期就发生错误。</p>
+<h2 id="修改资源名的格式">修改资源名的格式</h2>
+<p>资源 <strong>一定不能（must not）</strong> 修改名字－这意味着集合名不能被修改。</p>
+<p>不像其他大多数破坏兼容性的修改，这会影响 major 版本号：如果客户端期望使用 v2.0 访问在 v1.0 中创建的资源（或反过来），则应该在两个版本中使用相同的资源名称。</p>
+<p>对资源名的验证也 <strong>不应该（should not）</strong> 改变，原因如下：</p>
+<ul>
+<li>如果验证变严格，之前成功能请求现在可能会失败</li>
+<li>如果比之前文档中记录的验证要宽松，依据之前文档的客户端可能会被破坏。客户端很可能在其他地方保存了资源名，并且对字符集和名字的长度敏感。或者，客户端可能会执行自己的资源名称验证来保持与文档一致。（例如，当开始支持 EC2 资源的长 ID 时，<a href="https://aws.amazon.com/blogs/aws/theyre-here-longer-ec2-resource-ids-now-available/" target="_blank" rel="noopener">亚马逊向用户发出了许多警告并提供了迁移的时间</a>）</li>
+</ul>
+<p>请注意这样的修改只能在 proto 的文档中可见。因此当评审 CL 时审查除注释外的修改是不够的。</p>
+<h2 id="修改已有请求的可见性-visible-behavior">修改已有请求的可见性（visible behavior）</h2>
+<p>客户端总是依赖 API 的行为和语义，<strong>即使没有明确支持或记录此行为</strong>。因为在大多数情况下修改 API 的行为和语义在客户端看来是破坏性的。如果某行为不是加密隐藏的，你 <strong>应该（should）</strong> 假设用户已经依赖它了。</p>
+<p>因为这个原因加密分页 token 是个好主意，以防止用户创建自己的 token，以及防止当 token 行为发生变化时可能带来的不兼容性。</p>
+<h2 id="在-http-定义中修改-url-格式">在 HTTP 定义中修改 URL 格式</h2>
+<p>除了上面列出的资源名称的变化，这里还要考虑两种类型的修改：</p>
+<ul>
+<li>自定义方法名：虽然不是资源名称的一部分，但自定义方法名称是 REST 客户端 POST 请求 URL 的一部分。更改自定义方法名称不应该破坏 gRPC 客户端，但是公共 API 必须假定它们具有 REST 客户端。</li>
+<li>资源参数名：从 <code>v1/shelves/{shelf}/books/{book}</code> 到 <code>v1/shelves/{shelf_id}/books/{book_id}</code> 的修改不会影响替代的资源名称，但可能会影响代码生成。</li>
+</ul>
+<h2 id="在资源消息中添加读-写字段">在资源消息中添加读/写字段</h2>
+<p>客户端会经常执行读取/修改/写入的操作。大多数客户端不支持它们意识不到的字段值，特别是 proto3 不支持。你可以指定任意消息类型（而不是原始类型）中缺失的字段表示更新时不会被修改，但这样使删除这样的字段变的困难。原始类型（包括 <code>string</code> 和 <code>bytes</code>）不能简单地使用这种方法，因为明确地设置 <code>int32</code> 的值为 0 和不对它设置值在 proto3 中并没有区别。</p>
+<p>使用字段掩码来进行所有更新操作不会有问题，因为客户端不会隐式覆盖其不知道的字段。然而这是一个不寻常的决定，因为大部分 API 允许全部资源被更新。</p>
+<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="tailnode WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="tailnode Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      tailnode
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/" title="Google API 设计指南－兼容性">http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/架构/" rel="tag"># 架构</a>
+          
+            <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/google-api-design-guide/versioning/" rel="next" title="Google API 设计指南－版本控制">
+                <i class="fa fa-chevron-left"></i> Google API 设计指南－版本控制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/google-api-design-guide/directory-structure/" rel="prev" title="Google API 设计指南－目录结构">
+                Google API 设计指南－目录结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODE2MC80NzMz"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="tailnode">
+          <p class="site-author-name" itemprop="name">tailnode</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">39</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/tailnode" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:minghe1024@126.com" target="_blank" title="Email">
+                  
+                    <i class="fa fa-fw fa-envelope-o"></i>
+                  
+                  Email
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">保持向后兼容的修改</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#向-api-服务中添加-api-接口"><span class="nav-number">1.1.</span> <span class="nav-text">向 API 服务中添加 API 接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向-api-接口中添加方法"><span class="nav-number">1.2.</span> <span class="nav-text">向 API 接口中添加方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向方法添加-http-绑定"><span class="nav-number">1.3.</span> <span class="nav-text">向方法添加 HTTP 绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向请求信息添加字段"><span class="nav-number">1.4.</span> <span class="nav-text">向请求信息添加字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向响应信息添加字段"><span class="nav-number">1.5.</span> <span class="nav-text">向响应信息添加字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#向枚举添加值"><span class="nav-number">1.6.</span> <span class="nav-text">向枚举添加值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加只输出-output-only-的资源字段"><span class="nav-number">1.7.</span> <span class="nav-text">添加只输出（output-only）的资源字段</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">破坏向后兼容的修改</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#删除-重命名服务-接口-字段名-方法或枚举值"><span class="nav-number">2.1.</span> <span class="nav-text">删除/重命名服务、接口、字段名、方法或枚举值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改-http-绑定"><span class="nav-number">2.2.</span> <span class="nav-text">修改 HTTP 绑定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改字段类型"><span class="nav-number">2.3.</span> <span class="nav-text">修改字段类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改资源名的格式"><span class="nav-number">2.4.</span> <span class="nav-text">修改资源名的格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改已有请求的可见性-visible-behavior"><span class="nav-number">2.5.</span> <span class="nav-text">修改已有请求的可见性（visible behavior）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在-http-定义中修改-url-格式"><span class="nav-number">2.6.</span> <span class="nav-text">在 HTTP 定义中修改 URL 格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在资源消息中添加读-写字段"><span class="nav-number">2.7.</span> <span class="nav-text">在资源消息中添加读/写字段</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tailnode</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("EVvRxWT61nN0pk43YjVJWFk3-gzGzoHsz", "7Jx2gDx8NjLMf8fApbTTg9lp");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
