@@ -90,7 +90,7 @@
 <meta name="description" content="给岁月以文明，而不是给文明以岁月">
 <meta property="og:type" content="website">
 <meta property="og:title" content="tailnode 的博客">
-<meta property="og:url" content="http://tailnode.github.io/page/4/index.html">
+<meta property="og:url" content="http://tailnode.top/page/4/index.html">
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="给岁月以文明，而不是给文明以岁月">
 <meta property="og:locale" content="zh-Hans">
@@ -124,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="http://tailnode.github.io/page/4/">
+  <link rel="canonical" href="http://tailnode.top/page/4/">
 
 
 
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/了解kubernetes的ConfigMap/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/深入理解Go语言的slice/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -325,8 +325,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/01/了解kubernetes的ConfigMap/" itemprop="url">
-                  了解kubernetes的ConfigMap
+                <a class="post-title-link" href="/2017/01/深入理解Go语言的slice/" itemprop="url">
+                  深入理解Go语言的slice
                 </a>
               
             
@@ -360,7 +360,7 @@
 
           
           
-             <span id="/2017/01/了解kubernetes的ConfigMap/" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
+             <span id="/2017/01/深入理解Go语言的slice/" class="leancloud_visitors" data-flag-title="深入理解Go语言的slice">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -390,13 +390,14 @@
 
       
         
-          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
-<h4 id="生成configmap">生成ConfigMap</h4>
-<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
+          <p>先看这段代码，结果是<code>[0 2 3]</code>，很多人都能答对。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    modify(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后稍微改动一下，再猜一下结果</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s = s[:<span class="built_in">len</span>(s)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    pop(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果认为输出<code>[1 2]</code>的话那么你错了，结果是<code>[1 2 3]</code>，你可能会觉得很奇怪，slice是引用语义这个在第一个例子中已经证明了，为什么第二个例子中又不是这样呢。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/了解kubernetes的ConfigMap/#more" rel="contents">
+            <a class="btn" href="/2017/01/深入理解Go语言的slice/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -442,7 +443,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/ghost修改代码高亮和字体/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/ghost修改代码高亮和字体/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -581,7 +582,148 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/beego orm中时区的问题/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/Go的内存模型/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/01/Go的内存模型/" itemprop="url">
+                  Go的内存模型
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/01/Go的内存模型/" class="leancloud_visitors" data-flag-title="Go的内存模型">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h4 id="说明">说明</h4>
+<p>翻译自<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">The Go Memory Model</a></p>
+<h4 id="介绍">介绍</h4>
+<p>如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。</p>
+<h4 id="建议">建议</h4>
+<p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/Go的内存模型/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/beego orm中时区的问题/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -723,7 +865,292 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/了解etcd/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/golang在编译时用ldflags设置变量的值/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/01/golang在编译时用ldflags设置变量的值/" itemprop="url">
+                  golang在编译时用ldflags设置变量的值
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/01/golang在编译时用ldflags设置变量的值/" class="leancloud_visitors" data-flag-title="golang在编译时用ldflags设置变量的值">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>我们经常会在一些程序的输出中看到程序版本、编译时间、Git的commit id等信息，比如docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ming@vultr:~$ docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:      1.12.5</span><br><span class="line"> API version:  1.24</span><br><span class="line"> Go version:   go1.6.4</span><br><span class="line"> Git commit:   7392c3b</span><br><span class="line"> Built:        Fri Dec 16 02:42:17 2016</span><br><span class="line"> OS/Arch:      linux/amd64</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>我们可以提供一个配置文件<code>version.conf</code>，程序运行时从<code>version.conf</code>取得这些信息进行显示。但是在部署程序时，除了二进制文件还需要额外的配置文件，不是很方便。<br>
+或者将这些信息写入代码中，这样不需要额外的<code>version.conf</code>，但要在每次编译时修改代码文件，也够麻烦的了。<br>
+有一种更好的办法是在编译时使用参数<a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">-ldflags -X importpath.name=value</a>，官方解释如下</p>
+<blockquote>
+<p>-X importpath.name=value<br>
+Set the value of the string variable in importpath named name to value.<br>
+Note that before Go 1.5 this option took two separate arguments.<br>
+Now it takes one argument split on the first = sign.</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/golang在编译时用ldflags设置变量的值/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/了解kubernetes的ConfigMap/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/01/了解kubernetes的ConfigMap/" itemprop="url">
+                  了解kubernetes的ConfigMap
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/01/了解kubernetes的ConfigMap/" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
+<h4 id="生成configmap">生成ConfigMap</h4>
+<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/了解kubernetes的ConfigMap/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/了解etcd/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -874,147 +1301,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/深入理解Go语言的slice/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/深入理解Go语言的slice/" itemprop="url">
-                  深入理解Go语言的slice
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/深入理解Go语言的slice/" class="leancloud_visitors" data-flag-title="深入理解Go语言的slice">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>先看这段代码，结果是<code>[0 2 3]</code>，很多人都能答对。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    modify(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后稍微改动一下，再猜一下结果</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s = s[:<span class="built_in">len</span>(s)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    pop(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果认为输出<code>[1 2]</code>的话那么你错了，结果是<code>[1 2 3]</code>，你可能会觉得很奇怪，slice是引用语义这个在第一个例子中已经证明了，为什么第二个例子中又不是这样呢。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/深入理解Go语言的slice/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/golang闭包/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/golang闭包/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1153,294 +1440,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/Go的内存模型/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/Go的内存模型/" itemprop="url">
-                  Go的内存模型
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/Go的内存模型/" class="leancloud_visitors" data-flag-title="Go的内存模型">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h4 id="说明">说明</h4>
-<p>翻译自<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">The Go Memory Model</a></p>
-<h4 id="介绍">介绍</h4>
-<p>如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。</p>
-<h4 id="建议">建议</h4>
-<p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/Go的内存模型/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/golang在编译时用ldflags设置变量的值/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/golang在编译时用ldflags设置变量的值/" itemprop="url">
-                  golang在编译时用ldflags设置变量的值
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/golang在编译时用ldflags设置变量的值/" class="leancloud_visitors" data-flag-title="golang在编译时用ldflags设置变量的值">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>我们经常会在一些程序的输出中看到程序版本、编译时间、Git的commit id等信息，比如docker</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ming@vultr:~$ docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:      1.12.5</span><br><span class="line"> API version:  1.24</span><br><span class="line"> Go version:   go1.6.4</span><br><span class="line"> Git commit:   7392c3b</span><br><span class="line"> Built:        Fri Dec 16 02:42:17 2016</span><br><span class="line"> OS/Arch:      linux/amd64</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>我们可以提供一个配置文件<code>version.conf</code>，程序运行时从<code>version.conf</code>取得这些信息进行显示。但是在部署程序时，除了二进制文件还需要额外的配置文件，不是很方便。<br>
-或者将这些信息写入代码中，这样不需要额外的<code>version.conf</code>，但要在每次编译时修改代码文件，也够麻烦的了。<br>
-有一种更好的办法是在编译时使用参数<a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">-ldflags -X importpath.name=value</a>，官方解释如下</p>
-<blockquote>
-<p>-X importpath.name=value<br>
-Set the value of the string variable in importpath named name to value.<br>
-Note that before Go 1.5 this option took two separate arguments.<br>
-Now it takes one argument split on the first = sign.</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/golang在编译时用ldflags设置变量的值/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/01/常用命令/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/01/常用命令/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">

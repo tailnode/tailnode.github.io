@@ -91,11 +91,11 @@
 <meta name="keywords" content="架构,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Google API 设计指南－版本控制">
-<meta property="og:url" content="http://tailnode.github.io/2017/04/google-api-design-guide/versioning/index.html">
+<meta property="og:url" content="http://tailnode.top/2017/04/google-api-design-guide/versioning/index.html">
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="翻译自 API Design Guide - Versioning  这一章是网络 API 的版本控制指南。因为一个 API 服务 可以（may） 提供多个 API 接口，API 版本策略应用在 API 接口上而不是 API 服务。为了方便，下面的 API 表示 API 接口。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta property="og:updated_time" content="2018-11-29T01:54:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google API 设计指南－版本控制">
 <meta name="twitter:description" content="翻译自 API Design Guide - Versioning  这一章是网络 API 的版本控制指南。因为一个 API 服务 可以（may） 提供多个 API 接口，API 版本策略应用在 API 接口上而不是 API 服务。为了方便，下面的 API 表示 API 接口。">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="http://tailnode.github.io/2017/04/google-api-design-guide/versioning/">
+  <link rel="canonical" href="http://tailnode.top/2017/04/google-api-design-guide/versioning/">
 
 
 
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/04/google-api-design-guide/versioning/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/04/google-api-design-guide/versioning/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -389,7 +389,7 @@
         <blockquote>
 <p>翻译自 <a href="https://cloud.google.com/apis/design/versioning" target="_blank" rel="noopener">API Design Guide - Versioning</a></p>
 </blockquote>
-<p>这一章是网络 API 的版本控制指南。因为一个 API 服务 <strong>可以（may）</strong> 提供多个 <a href="http://tailnode.github.io/2017/04/google-api-design-guide/glossary/#interface">API 接口</a>，<a href="http://tailnode.github.io/2017/04/google-api-design-guide/glossary/#version">API 版本</a>策略应用在 API 接口上而不是 <a href="http://tailnode.github.io/2017/04/google-api-design-guide/glossary/#service">API 服务</a>。为了方便，下面的 API 表示 API 接口。</p>
+<p>这一章是网络 API 的版本控制指南。因为一个 API 服务 <strong>可以（may）</strong> 提供多个 <a href="https://tailnode.top/2017/04/google-api-design-guide/glossary/#interface">API 接口</a>，<a href="https://tailnode.top/2017/04/google-api-design-guide/glossary/#version">API 版本</a>策略应用在 API 接口上而不是 <a href="https://tailnode.top/2017/04/google-api-design-guide/glossary/#service">API 服务</a>。为了方便，下面的 API 表示 API 接口。</p>
 <a id="more"></a>
 <p>网络 API <strong>应该（should）</strong> 使用 <a href="http://semver.org/" target="_blank" rel="noopener">Semantic Versioning</a>。对于版本号 <code>MAJOR.MINOR.PATCH</code>：</p>
 <ol>
@@ -468,7 +468,7 @@
 <p>被多个 API 共享的通用稳定的数据类型（例如日期和时间） <strong>应该（should）</strong> 定义在单独的 proto 包中。如果有必要进行不兼容的修改，则 <strong>必须（must）</strong> 引入新的类型或包含新 major 版本的包。</p>
 <h1>向后兼容</h1>
 <p>定义什么是向后兼容的修改是比较困难的。</p>
-<p>下面列出了一些，但如果你有任何疑问，点击<a href="http://tailnode.github.io/2017/04/google-api-design-guide/compatibility/">这里</a>查看详情。</p>
+<p>下面列出了一些，但如果你有任何疑问，点击<a href="https://tailnode.top/2017/04/google-api-design-guide/compatibility/">这里</a>查看详情。</p>
 <h2 id="保持向后兼容的修改">保持向后兼容的修改</h2>
 <ul>
 <li>向 API 服务中添加 API 接口</li>
@@ -489,7 +489,7 @@
 <li>在 HTTP 定义中修改 URL 格式</li>
 <li>在资源消息中添加读/写字段</li>
 </ul>
-<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
 
       
     </div>
@@ -539,7 +539,7 @@
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://tailnode.github.io/2017/04/google-api-design-guide/versioning/" title="Google API 设计指南－版本控制">http://tailnode.github.io/2017/04/google-api-design-guide/versioning/</a>
+      <a href="http://tailnode.top/2017/04/google-api-design-guide/versioning/" title="Google API 设计指南－版本控制">http://tailnode.top/2017/04/google-api-design-guide/versioning/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>

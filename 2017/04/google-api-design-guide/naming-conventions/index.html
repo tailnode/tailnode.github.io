@@ -91,11 +91,11 @@
 <meta name="keywords" content="架构,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Google API 设计指南－命名约定">
-<meta property="og:url" content="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/index.html">
+<meta property="og:url" content="http://tailnode.top/2017/04/google-api-design-guide/naming-conventions/index.html">
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="翻译自 API Design Guide - Naming Conventions  为了在长期和大量使用的 API 中提供统一的开发体验，API 中的所有名字 应该（should） :  简单 直观 一致  此文章讨论了接口、资源、集合、方法和消息的名字。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta property="og:updated_time" content="2018-11-29T01:54:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google API 设计指南－命名约定">
 <meta name="twitter:description" content="翻译自 API Design Guide - Naming Conventions  为了在长期和大量使用的 API 中提供统一的开发体验，API 中的所有名字 应该（should） :  简单 直观 一致  此文章讨论了接口、资源、集合、方法和消息的名字。">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/">
+  <link rel="canonical" href="http://tailnode.top/2017/04/google-api-design-guide/naming-conventions/">
 
 
 
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/04/google-api-design-guide/naming-conventions/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -456,9 +456,9 @@
 <p>在 .proto 文件中指定的 Java 包名 <strong>必须（must）</strong> 符合标准 Java 包名的前缀（<code>com.</code>, <code>edu.</code>, <code>net.</code> 等）。例如：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">package google.calendar.v3;</span><br><span class="line"></span><br><span class="line">// 指定 Java 包的名字，使用标准前缀 &quot;com.&quot;</span><br><span class="line">option java_package = &quot;com.google.calendar.v3&quot;;</span><br></pre></td></tr></table></figure>
 <h1>集合 ID</h1>
-<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/resource-names/#collectionid">集合 ID</a> <strong>应该（should）</strong> 使用美式英语的、复数形式的、首字母小写的驼峰命名法，例如：<code>events</code>, <code>children</code> 或 <code>deletedEvents</code>。</p>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/resource-names/#collectionid">集合 ID</a> <strong>应该（should）</strong> 使用美式英语的、复数形式的、首字母小写的驼峰命名法，例如：<code>events</code>, <code>children</code> 或 <code>deletedEvents</code>。</p>
 <h1>接口名</h1>
-<p>为了避免和形如 <code>pubsub.googleapis.com</code> 的<a href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/#service_name">资源名</a>混淆，术语 <em>接口名</em> 指的是在 .proto 文件中定义 <code>service</code> 时使用的名字：</p>
+<p>为了避免和形如 <code>pubsub.googleapis.com</code> 的<a href="https://tailnode.top/2017/04/google-api-design-guide/naming-conventions/#service_name">资源名</a>混淆，术语 <em>接口名</em> 指的是在 .proto 文件中定义 <code>service</code> 时使用的名字：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// Library is the interface name.</span><br><span class="line">service Library &#123;</span><br><span class="line">  rpc ListBooks(...) returns (...);</span><br><span class="line">  rpc ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>你可以认为 <em>服务名</em> 是指一组 API 的具体实现，<em>接口名</em> 是指一个 API 的抽象定义。</p>
 <p>接口名称 <strong>应该（should）</strong> 使用直观的名词，如 Calendar 或 Blob。<strong>不应该（should not）</strong> 与编程语言中已有的任何概念或运行时库冲突（如：File）。</p>
@@ -568,7 +568,7 @@
 <li>spec (specification)</li>
 <li>stats (statistics)</li>
 </ul>
-<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
 
       
     </div>
@@ -618,7 +618,7 @@
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/" title="Google API 设计指南－命名约定">http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/</a>
+      <a href="http://tailnode.top/2017/04/google-api-design-guide/naming-conventions/" title="Google API 设计指南－命名约定">http://tailnode.top/2017/04/google-api-design-guide/naming-conventions/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>

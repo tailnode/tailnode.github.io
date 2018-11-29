@@ -91,11 +91,11 @@
 <meta name="keywords" content="架构,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Google API 设计指南－设计模式">
-<meta property="og:url" content="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/index.html">
+<meta property="og:url" content="http://tailnode.top/2017/04/google-api-design-guide/design-patterns/index.html">
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="翻译自 API Design Guide - Design Patterns  空响应体 标准的 Delete 方法 必须（must） 返回 google.protobuf.Empty 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 必须（must） 具有自己的 XxxResponse 消息，即使它们是空的，因为功能">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta property="og:updated_time" content="2018-11-29T01:54:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google API 设计指南－设计模式">
 <meta name="twitter:description" content="翻译自 API Design Guide - Design Patterns  空响应体 标准的 Delete 方法 必须（must） 返回 google.protobuf.Empty 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 必须（must） 具有自己的 XxxResponse 消息，即使它们是空的，因为功能">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/">
+  <link rel="canonical" href="http://tailnode.top/2017/04/google-api-design-guide/design-patterns/">
 
 
 
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/04/google-api-design-guide/design-patterns/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -470,7 +470,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package google.example.library.v1;</span><br><span class="line"></span><br><span class="line">service Library &#123;</span><br><span class="line">  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) &#123;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: &quot;/v1/&#123;name=shelves/*&#125;/books&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">enum BookView &#123;</span><br><span class="line">  // 响应中只包含作者、标题、ISBN 和唯一的图书 ID。这是默认值。</span><br><span class="line">  BASIC = 0;</span><br><span class="line"></span><br><span class="line">  // 返回所有信息，包括书中的内容</span><br><span class="line">  FULL = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ListBooksRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line"></span><br><span class="line">  // 指定返回图书资源的哪些部分</span><br><span class="line">  BookView view = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>对应的 URL：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET https://library.googleapis.com/v1/shelves/shelf1/books?view=BASIC</span><br></pre></td></tr></table></figure>
-<p>可以在 <a href="http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/">标准方法</a> 一章中查看更多关于方法定义、请求和响应的内容。</p>
+<p>可以在 <a href="https://tailnode.top/2017/03/google-api-design-guide/standard-methods/">标准方法</a> 一章中查看更多关于方法定义、请求和响应的内容。</p>
 <h1>ETag</h1>
 <p>ETag 是一个不透明的标识符，允许客户端进行条件请求。为了支持 ETag，API <strong>应该（should）</strong> 在资源定义中包含一个字符串字段 <code>etag</code>，它的语义 <strong>必须(must)</strong> 与 ETag的常用用法相匹配。通常，<code>etag</code> 包含由服务器计算出的资源指纹。更多详细信息，请参阅<a href="https://en.wikipedia.org/wiki/HTTP_ETag" target="_blank" rel="noopener">维基百科</a>和 <a href="https://tools.ietf.org/html/rfc7232#section-2.3" target="_blank" rel="noopener">RFC 7232</a>。</p>
 <p>ETags 可以强验证或弱验证，其中弱验证的ETag 以 <code>W /</code> 为前缀。在这种情况下，强验证意味着具有相同 ETag 的两个资源具有相同的内容和相同的额外字段（Content-Type）。这意味着强验证的 ETag 允许缓存稍后组装的部分响应。</p>
@@ -480,7 +480,7 @@
 <p>API 可能希望将由客户端提供的字段和只由服务端在特定资源上返回的字段进行区分。对于仅输出的字段，**必须（shall）**记录字段属性。</p>
 <p>请注意，如果客户端在请求中设置了仅输出（output only）字段，或者客户端使用仅输出字段指定了一个 <code>google.protobuf.FieldMask</code>，则服务器 <strong>必须（must）</strong> 接受该请求而不能出错。这意味着服务器 <strong>必须（must）</strong> 忽略仅输出字段的存在及其任何指示。这个建议的原因是因为客户端通常会将服务器返回的资源重用为另一个请求的输入，例如一个获取到的 <code>Book</code> 将在 UPDATE 方法中被再次使用。如果要验证仅输出字段，客户端需要做清除输出字段的额外工作。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">message Book &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  // 只用做输出</span><br><span class="line">  Timestamp create_time = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
 
       
     </div>
@@ -530,7 +530,7 @@
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/" title="Google API 设计指南－设计模式">http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/</a>
+      <a href="http://tailnode.top/2017/04/google-api-design-guide/design-patterns/" title="Google API 设计指南－设计模式">http://tailnode.top/2017/04/google-api-design-guide/design-patterns/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>

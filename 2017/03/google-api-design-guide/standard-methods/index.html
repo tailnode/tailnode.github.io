@@ -91,11 +91,11 @@
 <meta name="keywords" content="架构,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Google API 设计指南－标准方法">
-<meta property="og:url" content="http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/index.html">
+<meta property="og:url" content="http://tailnode.top/2017/03/google-api-design-guide/standard-methods/index.html">
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="翻译自 API Design Guide - Standard Methods  此章节定义标准方法 List、Get、Create、Update 和 Delete。标准方法存在的意义是广泛的 API 中许多 API 方法具有非常相似的语义，通过将这些类似的 API 融合到标准方法中，我们可以显著降低复杂性并提高一致性。以 Google APIs 为例，超过 70% 是标准方法，这让它们更加易于">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta property="og:updated_time" content="2018-11-29T01:54:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google API 设计指南－标准方法">
 <meta name="twitter:description" content="翻译自 API Design Guide - Standard Methods  此章节定义标准方法 List、Get、Create、Update 和 Delete。标准方法存在的意义是广泛的 API 中许多 API 方法具有非常相似的语义，通过将这些类似的 API 融合到标准方法中，我们可以显著降低复杂性并提高一致性。以 Google APIs 为例，超过 70% 是标准方法，这让它们更加易于">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/">
+  <link rel="canonical" href="http://tailnode.top/2017/03/google-api-design-guide/standard-methods/">
 
 
 
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/">
+    <link itemprop="mainEntityOfPage" href="http://tailnode.top/2017/03/google-api-design-guide/standard-methods/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -440,14 +440,14 @@
 <p>下面章节详细描述了每一个标准方法。这些例子展示了在 .proto 文件中定义的方法，其中包含用于 HTTP 映射的特殊注释。你可以在 <a href="https://github.com/googleapis/googleapis" target="_blank" rel="noopener">Google APIs 项目</a>中找到许多使用标准方法的例子。</p>
 <h1><span id="list">List</span></h1>
 <p><code>List</code> 方法接收资源名和零个或多个其它参数做为输入，返回符合输入的资源列表。它也通常被用来搜索资源。</p>
-<p><code>List</code> 适合取得没有缓存且大小有限的来自单个集合的数据。对于更广泛的情况，<strong>应该（should）</strong> 使用<a href="http://tailnode.github.io/2017/03/google-api-design-guide/custom-methods/">自定义方法</a>。</p>
+<p><code>List</code> 适合取得没有缓存且大小有限的来自单个集合的数据。对于更广泛的情况，<strong>应该（should）</strong> 使用<a href="https://tailnode.top/2017/03/google-api-design-guide/custom-methods/">自定义方法</a>。</p>
 <p>应该使用自定义的 <code>BatchGet</code> 方法来实现批量获取（例如接收多个资源 ID然后返回对应的资源），而不是使用 <code>List</code>。但如果已存在能够提供同样功能的 <code>List</code> 方法，你 <strong>可以（may）</strong> 为此目的重用 <code>List</code> 方法。如果你在使用自定义的 <code>BatchGet</code> 方法，<strong>应该（should）</strong> 将它映射成 <code>HTTP GET</code>。</p>
-<p>适用的常见模式：<a href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/#list_pagination">分页</a>、<a href="http://tailnode.github.io/2017/04/google-api-design-guide/design-patterns/#sorting_order">结果排序</a></p>
-<p>适用的命名约定：<a href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/#list_filter_field">过滤字段</a>、<a href="http://tailnode.github.io/2017/04/google-api-design-guide/naming-conventions/#list_response">结果字段</a></p>
+<p>适用的常见模式：<a href="https://tailnode.top/2017/04/google-api-design-guide/design-patterns/#list_pagination">分页</a>、<a href="https://tailnode.top/2017/04/google-api-design-guide/design-patterns/#sorting_order">结果排序</a></p>
+<p>适用的命名约定：<a href="https://tailnode.top/2017/04/google-api-design-guide/naming-conventions/#list_filter_field">过滤字段</a>、<a href="https://tailnode.top/2017/04/google-api-design-guide/naming-conventions/#list_response">结果字段</a></p>
 <p>HTTP 映射：</p>
 <ul>
 <li><code>List</code> 方法 <strong>必须（must）</strong> 使用 HTTP <code>GET</code> 动词。</li>
-<li><strong>应该（should）</strong> 把要列出集合的资源名字放在 URL path 参数中。如果集合名映射到 URL path 中，URL 模版的最后一段（<a href="http://tailnode.github.io/2017/03/google-api-design-guide/resource-names/#collectionid">集合 ID</a>） <strong>必须（must）</strong> 是常量。</li>
+<li><strong>应该（should）</strong> 把要列出集合的资源名字放在 URL path 参数中。如果集合名映射到 URL path 中，URL 模版的最后一段（<a href="https://tailnode.top/2017/03/google-api-design-guide/resource-names/#collectionid">集合 ID</a>） <strong>必须（must）</strong> 是常量。</li>
 <li>所有其他的请求信息字段 <strong>必须（shall）</strong> 映射到 URL 的 <em>query</em> 参数中。</li>
 <li>没有请求体，API 配置中<strong>一定不能（must not）</strong> 定义 <code>body</code>。</li>
 <li>响应体 <strong>应该（should）</strong> 包含资源列表和可选的元数据。</li>
@@ -480,11 +480,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">rpc CreateBook(CreateBookRequest) returns (Book) &#123;</span><br><span class="line">  // Create 映射为 HTTP POST，URL path 做为集合名称</span><br><span class="line">  // HTTP 请求体中包含资源</span><br><span class="line">  option (google.api.http) = &#123;</span><br><span class="line">    // 通过 `parent` 获取父资源名，例如 &quot;shelves/1&quot;</span><br><span class="line">    post: &quot;/v1/&#123;parent=shelves/*&#125;/books&quot;</span><br><span class="line">    body: &quot;book&quot;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message CreateBookRequest &#123;</span><br><span class="line">  // 将被创建的 book 的父资源名</span><br><span class="line">  string parent = 1;</span><br><span class="line"></span><br><span class="line">  // book 使用的 ID</span><br><span class="line">  string book_id = 3;</span><br><span class="line"></span><br><span class="line">  // 资源 book 将被创建，字段名应该与方法名中的名词相匹配</span><br><span class="line">  Book book = 2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rpc CreateShelf(CreateShelfRequest) returns (Shelf) &#123;</span><br><span class="line">  option (google.api.http) = &#123;</span><br><span class="line">    post: &quot;/v1/shelves&quot;</span><br><span class="line">    body: &quot;shelf&quot;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message CreateShelfRequest &#123;</span><br><span class="line">  Shelf shelf = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h1><span id="update">Update</span></h1>
 <p><code>Update</code> 方法接收包含资源和零个或多个参数的请求，更新指定的资源和属性并返回更新后的资源。</p>
-<p>可修改的资源属性 <strong>应该（should）</strong> 使用 <code>Update</code> 方法来更新，除非属性中包含<a href="http://tailnode.github.io/2017/03/google-api-design-guide/resource-names/">资源名或父资源</a>。任何<em>重命名</em>或<em>移动</em>资源的操作 <strong>一定不要（must not）</strong> 通过 <code>Update</code> 执行，<strong>必须（shall）</strong> 通过自定义方法处理。</p>
+<p>可修改的资源属性 <strong>应该（should）</strong> 使用 <code>Update</code> 方法来更新，除非属性中包含<a href="https://tailnode.top/2017/03/google-api-design-guide/resource-names/">资源名或父资源</a>。任何<em>重命名</em>或<em>移动</em>资源的操作 <strong>一定不要（must not）</strong> 通过 <code>Update</code> 执行，<strong>必须（shall）</strong> 通过自定义方法处理。</p>
 <p>HTTP 映射：</p>
 <ul>
 <li>标准的 <code>Update</code> 方法 <strong>应该（should）</strong> 支持资源的部分更新，使用带有名为 <code>update_mask</code> 的 <code>FieldMask</code> 字段的 HTTP 动词 <code>PATCH</code> 来执行操作。</li>
-<li><strong>应该（should）</strong> 使用<a href="http://tailnode.github.io/2017/03/google-api-design-guide/custom-methods/">自定义方法</a>来实现更高级的 <code>Update</code> 方法，例如追加重复的字段。</li>
+<li><strong>应该（should）</strong> 使用<a href="https://tailnode.top/2017/03/google-api-design-guide/custom-methods/">自定义方法</a>来实现更高级的 <code>Update</code> 方法，例如追加重复的字段。</li>
 <li>如果 <code>Update</code> 方法仅支持资源的完整更新，则 <strong>必须（must）</strong> 使用 HTTP 动词 <code>PUT</code>实现。然而并不鼓励这样做，因为当添加新的资源字段时会有后向兼容的问题。</li>
 <li>被修改资源的名称字段 <strong>必须（must）</strong> 映射到 URL path 参数中。此字段也 <strong>可以（may）</strong> 加在资源信息中。</li>
 <li>包含资源的请求信息 <strong>必须（must）</strong> 映射到请求体中。</li>
@@ -509,7 +509,7 @@
 </ul>
 <p><code>Delete</code> 方法的调用在效果上应该是幂等的，但并不需要有相同的返回值。任意次 <code>Delete</code> 请求的结果 <strong>应该（should）</strong> 是资源被删除，但只有第一次请求应该返回正确，后续的请求应该返回 <code>google.rpc.Code.NOT_FOUND</code>。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">rpc DeleteBook(DeleteBookRequest) returns (google.protobuf.Empty) &#123;</span><br><span class="line">  // Delete 映射为 HTTP DELETE。资源名映射到 URL path 参数中</span><br><span class="line">  // 没有请求体</span><br><span class="line">  option (google.api.http) = &#123;</span><br><span class="line">    // 注意 URL 模板变量获取待删除资源的名称，例如 &quot;shelves/shelf1/books/book2&quot;</span><br><span class="line">    delete: &quot;/v1/&#123;name=shelves/*/books/*&#125;&quot;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message DeleteBookRequest &#123;</span><br><span class="line">  // 待删除的资源名称，例如 &quot;shelves/shelf1/books/book2&quot;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><a href="http://tailnode.github.io/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
 
       
     </div>
@@ -559,7 +559,7 @@
     </li>
     <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/" title="Google API 设计指南－标准方法">http://tailnode.github.io/2017/03/google-api-design-guide/standard-methods/</a>
+      <a href="http://tailnode.top/2017/03/google-api-design-guide/standard-methods/" title="Google API 设计指南－标准方法">http://tailnode.top/2017/03/google-api-design-guide/standard-methods/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明： </strong>
