@@ -1586,7 +1586,7 @@ app.Run()的操作：</p>
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/docker容器间通信的一种方法/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/golang在编译时用ldflags设置变量的值/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1608,8 +1608,8 @@ app.Run()的操作：</p>
             
               
                 
-                <a class="post-title-link" href="/2017/01/docker容器间通信的一种方法/" itemprop="url">
-                  docker容器间通信的一种方法
+                <a class="post-title-link" href="/2017/01/golang在编译时用ldflags设置变量的值/" itemprop="url">
+                  golang在编译时用ldflags设置变量的值
                 </a>
               
             
@@ -1643,7 +1643,7 @@ app.Run()的操作：</p>
 
           
           
-             <span id="/2017/01/docker容器间通信的一种方法/" class="leancloud_visitors" data-flag-title="docker容器间通信的一种方法">
+             <span id="/2017/01/golang在编译时用ldflags设置变量的值/" class="leancloud_visitors" data-flag-title="golang在编译时用ldflags设置变量的值">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1673,17 +1673,20 @@ app.Run()的操作：</p>
 
       
         
-          <p>以我的ghost博客为例进行说明，我在VPS上用docker启动了两个ghost博客，还有一个Nginx做反向代理，将两个域名分别指向两个博客。</p>
-<h4 id="docker启动命令">docker启动命令</h4>
-<p>ghost:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -e NODE_ENV=production --name ghost1 -v /path/to/data/ghost/ghost1/:/var/lib/ghost -d ghost</span><br><span class="line">docker run -e NODE_ENV=production --name ghost2 -v /path/to/data/ghost/ghost2/:/var/lib/ghost -d ghost</span><br></pre></td></tr></table></figure>
-<p>nginx:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80:80 --name nginx --link ghost1 --link ghost2 -v /path/to/data/nginx/nginx.conf:/etc/nginx/nginx.conf -d nginx</span><br></pre></td></tr></table></figure>
-<p>先启动两个ghost，然后启动nginx。使用–link参数将容器“链接”到一起，此参数会在容器中加入环境变量并在<code>/etc/hosts</code>中插入一条容器名与IP的映射</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@fabfd4bacfda:/# cat /etc/hosts</span><br><span class="line">172.17.0.3      ghost1 d19c0134011a</span><br><span class="line">172.17.0.5      ghost2 0e2e66ba70e0</span><br><span class="line">172.17.0.4      fabfd4bacfda</span><br></pre></td></tr></table></figure>
+          <p>我们经常会在一些程序的输出中看到程序版本、编译时间、Git的commit id等信息，比如docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ming@vultr:~$ docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:      1.12.5</span><br><span class="line"> API version:  1.24</span><br><span class="line"> Go version:   go1.6.4</span><br><span class="line"> Git commit:   7392c3b</span><br><span class="line"> Built:        Fri Dec 16 02:42:17 2016</span><br><span class="line"> OS/Arch:      linux/amd64</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>我们可以提供一个配置文件<code>version.conf</code>，程序运行时从<code>version.conf</code>取得这些信息进行显示。但是在部署程序时，除了二进制文件还需要额外的配置文件，不是很方便。<br>
+或者将这些信息写入代码中，这样不需要额外的<code>version.conf</code>，但要在每次编译时修改代码文件，也够麻烦的了。<br>
+有一种更好的办法是在编译时使用参数<a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">-ldflags -X importpath.name=value</a>，官方解释如下</p>
+<blockquote>
+<p>-X importpath.name=value<br>
+Set the value of the string variable in importpath named name to value.<br>
+Note that before Go 1.5 this option took two separate arguments.<br>
+Now it takes one argument split on the first = sign.</p>
+</blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/docker容器间通信的一种方法/#more" rel="contents">
+            <a class="btn" href="/2017/01/golang在编译时用ldflags设置变量的值/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
