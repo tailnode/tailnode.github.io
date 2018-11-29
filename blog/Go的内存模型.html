@@ -1,0 +1,1160 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="VYvdNdoeRCKzwBkNBludJVrQrnTHRTJKMRI4BZt86Ac">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="说明 翻译自The Go Memory Model 介绍 如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。 建议 如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如sync和sync/atomic来保护数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go的内存模型">
+<meta property="og:url" content="https://tailnode.top/blog/Go的内存模型.html">
+<meta property="og:site_name" content="tailnode 的博客">
+<meta property="og:description" content="说明 翻译自The Go Memory Model 介绍 如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。 建议 如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如sync和sync/atomic来保护数据。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go的内存模型">
+<meta name="twitter:description" content="说明 翻译自The Go Memory Model 介绍 如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。 建议 如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如sync和sync/atomic来保护数据。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'YAFGFO8GJT',
+      apiKey: 'f12750d1095dc6fb0c46a02f55dcd878',
+      indexName: 'hexo',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"在这里输入要搜索的内容","hits_empty":"没有 ${query} 的相关内容","hits_stats":"找到 ${hits} 条结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://tailnode.top/blog/Go的内存模型.html">
+
+
+
+
+
+  <title> Go的内存模型 | tailnode 的博客 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2147b40a1ceec3a2fcebb5dc4cb67c50";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tailnode 的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">给岁月以文明，而不是给文明以岁月</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="输入搜索内容..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/Go的内存模型.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Go的内存模型
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/Go的内存模型.html" class="leancloud_visitors" data-flag-title="Go的内存模型">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="说明">说明</h4>
+<p>翻译自<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">The Go Memory Model</a></p>
+<h4 id="介绍">介绍</h4>
+<p>如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。</p>
+<h4 id="建议">建议</h4>
+<p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
+<a id="more"></a>
+<h4 id="先行发生">先行发生</h4>
+<p>在一个gouroutine中，读和写一定是按照程序中的顺序执行的。即编译器和处理器只有在不会改变这个goroutine的行为时才可能修改读和写的执行顺序。由于重排，不同的goroutine可能会看到不同的执行顺序。例如，一个goroutine执行<code>a = 1;b = 2;</code>，另一个goroutine可能看到<code>b</code>在<code>a</code>之前更新。<br>
+为了说明读和写的必要条件，我们定义了<code>先行发生（Happens Before）</code>–Go程序中执行内存操作的偏序。如果事件<code>e1</code>发生在<code>e2</code>前，我们可以说<code>e2</code>发生在<code>e1</code>后。如果<code>e1</code>不发生在<code>e2</code>前也不发生在<code>e2</code>后，我们就说<code>e1</code>和<code>e2</code>是并发的。<br>
+<strong><em>在单独的goroutine中先行发生的顺序即是程序中表达的顺序。</em></strong><br>
+当下面条件满足时，对变量 <strong><em>v</em></strong> 的读操作 <strong><em>r</em></strong> 是 <strong><em>被允许</em></strong> 看到对 <strong><em>v</em></strong> 的写操作 <strong><em>w</em></strong>  的：</p>
+<ol>
+<li><strong><em>r</em></strong> 不先行发生于 <strong><em>w</em></strong></li>
+<li>在 <strong><em>w</em></strong> 后 <strong><em>r</em></strong> 前没有对 <strong><em>v</em></strong> 的其他写操作</li>
+</ol>
+<p>为了保证对变量 <strong><em>v</em></strong> 的读操作 <strong><em>r</em></strong> 看到对 <strong><em>v</em></strong> 的写操作 <strong><em>w</em></strong> ,要确保 <strong><em>w</em></strong> 是 <strong><em>r</em></strong> 允许看到的唯一写操作。即当下面条件满足时， <strong><em>r</em></strong>  <strong><em>被保证</em></strong> 看到 <strong><em>w</em></strong> ：</p>
+<ol>
+<li><strong><em>w</em></strong> 先行发生于 <strong><em>r</em></strong></li>
+<li>其他对共享变量 <strong><em>v</em></strong> 的写操作要么在 <strong><em>w</em></strong> 前，要么在 <strong><em>r</em></strong> 后。<br>
+这一对条件比前面的条件更严格，需要没有其他写操作与 <strong><em>w</em></strong> 或 <strong><em>r</em></strong> 并发发生。<br>
+单独的goroutine中没有并发，所以上面两个定义是相同的：读操作 <strong><em>r</em></strong> 看到最近一次的写操作 <strong><em>w</em></strong> 写入 <strong><em>v</em></strong> 的值。当多个goroutine访问共享变量 <strong><em>v</em></strong> 时，它们必须使用同步事件来建立先行发生这一条件来保证读操作能看到需要的写操作。<br>
+对变量 <strong><em>v</em></strong> 的零值初始化在内存模型中表现的与写操作相同。<br>
+对大于一个字的变量的读写操作表现的像以不确定顺序对多个一字大小的变量的操作。</li>
+</ol>
+<h4 id="同步">同步</h4>
+<h5 id="初始化">初始化</h5>
+<p>程序的初始化在单独的goroutine中进行，但这个goroutine可能会创建出并发执行的其他goroutine。<br>
+<strong><em>如果包p引入（import）包q，那么q的init函数的结束先行发生于p的所有init函数开始</em></strong><br>
+<strong><em>main.main函数的开始发生在所有init函数结束之后</em></strong></p>
+<h5 id="创建goroutine">创建goroutine</h5>
+<p><code>go</code>关键字开启新的goroutine，先行发生于这个goroutine开始执行，例如下面程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">hello</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>hello</code>会在之后的某时刻打印出&quot;hello, world&quot;（可能在<code>hello</code>返回之后）</p>
+<h5 id="销毁goroutine">销毁goroutine</h5>
+<p>gouroutine的退出并不会保证先行发生于程序的任何事件。例如下面程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">hello</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; a = <span class="string">"hello"</span> &#125;()</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没有用任何同步操作限制对a的赋值，所以并不能保证其他goroutine能看到a的变化。实际上，一个激进的编译器可能会删掉整个go语句。<br>
+如果想要在一个goroutine中看到另一个goroutine的执行效果，请使用锁或者channel这种同步机制来建立程序执行的相对顺序。</p>
+<h5 id="channel通信">channel通信</h5>
+<p>channel通信是goroutine同步的主要方法。每一个在特定channel的发送操作都会匹配到通常在另一个goroutine执行的接收操作。<br>
+<strong><em>在channel的发送操作先行发生于对应的接收操作完成</em></strong><br>
+例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    c &lt;- <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    &lt;-c</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个程序能保证打印出&quot;hello, world&quot;。对a的写先行发生于在c上的发送，先行发生于在c上的对应的接收完成，先行发生于<code>print</code>。<br>
+<strong><em>对channel的关闭先行发生于接收到零值，因为channel已经被关闭了。</em></strong><br>
+在上面的例子中，将<code>c &lt;- 0</code>替换为<code>close(c)</code>还会产生同样的结果。<br>
+<strong><em>无缓冲channel的接收先行发生于发送完成</em></strong><br>
+如下程序（和上面类似，只交换了对channel的读写位置并使用了非缓冲channel）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    &lt;-c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    c &lt;- <span class="number">0</span></span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此程序也能保证打印出&quot;hello, world&quot;。对<strong><em>a</em></strong>的写先行发生于从<strong><em>c</em></strong>接收，先行发生于向<strong><em>c</em></strong>发送完成，先行发生于<code>print</code>。</p>
+<p>如果是带缓冲的channel（例如<code>c = make(chan int, 1)</code>），程序不保证打印出&quot;hello, world&quot;(可能打印空字符，程序崩溃或其他行为)。<br>
+<strong><em>在容量为C的channel上的第k个接收先行发生于从这个channel上的第k+C次发送完成。</em></strong><br>
+这条规则将前面的规则推广到了带缓冲的channel上。可以通过带缓冲的channel来实现计数信号量：channel中的元素数量对应着活动的数量，channel的容量表示同时活动的最大数量，发送元素获取信号量，接收元素释放信号量，这是限制并发的通常用法。<br>
+下面程序为<code>work</code>中的每一项开启一个goroutine，但这些goroutine通过有限制的channel来确保最多同时执行三个工作函数（w）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> limit = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, w := <span class="keyword">range</span> work &#123;</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(w <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">            limit &lt;- <span class="number">1</span></span><br><span class="line">            w()</span><br><span class="line">            &lt;-limit</span><br><span class="line">        &#125;(w)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">select</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="锁">锁</h5>
+<p>sync包实现了两个锁的数据类型sync.Mutex和sync.RWMutex。<br>
+<strong><em>对任意的sync.Mutex或sync.RWMutex变量l和n &lt; m，n次调用l.Unlock()先行发生于m次l.Lock()返回</em></strong><br>
+下面程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> l sync.Mutex</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    l.Unlock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    l.Lock()</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    l.Lock()</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>能保证打印出&quot;hello, world&quot;。第一次调用l.Unlock()（在f()中）先行发生于main中的第二次l.Lock()返回, 先行发生于print。<br>
+<strong><em>对于sync.RWMutex变量l，任意的函数调用l.RLock满足第n次l.RLock后发生于第n次调用l.Unlock，对应的l.RUnlock先行发生于第n+1次调用l.Lock。</em></strong></p>
+<h5 id="once">Once</h5>
+<p>sync包的<code>Once</code>为多个goroutine提供了安全的初始化机制。能在多个线程中执行<code>once.Do(f)</code>，但只有一个<code>f()</code>会执行，其他调用会一直阻塞直到<code>f()</code>返回。<br>
+<strong><em>通过<code>once.Do(f)</code>执行<code>f()</code>先行发生（指f()返回）于其他的<code>once.Do(f)</code>返回。</em></strong><br>
+如下程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> once sync.Once</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doprint</span><span class="params">()</span></span> &#123;</span><br><span class="line">    once.Do(setup)</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">twoprint</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> doprint()</span><br><span class="line">    <span class="keyword">go</span> doprint()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用<code>twoprint</code>会打印&quot;hello, world&quot;两次。<code>setup</code>只在第一次<code>doprint</code>时执行。</p>
+<h5 id="错误的同步方法">错误的同步方法</h5>
+<p>注意，读操作 <strong><em>r</em></strong> 可能会看到并发的写操作 <strong><em>w</em></strong> 。即使这样也不能表明 <strong><em>r</em></strong> 之后的读能看到 <strong><em>w</em></strong> 之前的写。<br>
+如下程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a, b <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="number">1</span></span><br><span class="line">    b = <span class="number">2</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">g</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(b)</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> f()</span><br><span class="line">    g()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>g</code>可能先打印出2然后是0。<br>
+这个事实证明一些旧的习惯是错误的。<br>
+双重检查锁定是为了避免同步的资源消耗。例如twoprint程序可能会错误的写成：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> done <span class="keyword">bool</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    done = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doprint</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> !done &#123;</span><br><span class="line">        once.Do(setup)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">twoprint</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> doprint()</span><br><span class="line">    <span class="keyword">go</span> doprint()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>doprint</code>中看到<code>done</code>被赋值并不保证能看到对<code>a</code>赋值。此程序可能会错误地输出空字符而不是&quot;hello, world&quot;。<br>
+另一个错误的习惯是忙等待 例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"><span class="keyword">var</span> done <span class="keyword">bool</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a = <span class="string">"hello, world"</span></span><br><span class="line">    done = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> setup()</span><br><span class="line">    <span class="keyword">for</span> !done &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和之前程序类似，在main中看到<code>done</code>被赋值不能保证看到<code>a</code>被赋值，所以此程序也可能打印出空字符。更糟糕的是因为两个线程间没有同步事件，在main中可能永远不会看到<code>done</code>被赋值，所以main中的循环不保证能结束。<br>
+对程序做一个微小的改变：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T <span class="keyword">struct</span> &#123;</span><br><span class="line">    msg <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> g *T</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setup</span><span class="params">()</span></span> &#123;</span><br><span class="line">    t := <span class="built_in">new</span>(T)</span><br><span class="line">    t.msg = <span class="string">"hello, world"</span></span><br><span class="line">    g = t</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">go</span> setup()</span><br><span class="line">    <span class="keyword">for</span> g == <span class="literal">nil</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">print</span>(g.msg)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>即使main看到了<code>g != nil</code>并且退出了循环，也不能保证看到g.msg的初始化值。<br>
+在上面所有的例子中，解决办法都是相同的：明确的使用同步。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="tailnode WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="tailnode Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      tailnode
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://tailnode.top/blog/Go的内存模型.html" title="Go的内存模型">https://tailnode.top/blog/Go的内存模型.html</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/常用命令.html" rel="next" title="常用命令">
+                <i class="fa fa-chevron-left"></i> 常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/docker容器间通信的一种方法.html" rel="prev" title="docker容器间通信的一种方法">
+                docker容器间通信的一种方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODE2MC80NzMz"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="tailnode">
+          <p class="site-author-name" itemprop="name">tailnode</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">39</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/tailnode" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:minghe1024@126.com" target="_blank" title="Email">
+                  
+                    <i class="fa fa-fw fa-envelope-o"></i>
+                  
+                  Email
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#介绍"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建议"><span class="nav-number">3.</span> <span class="nav-text">建议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#先行发生"><span class="nav-number">4.</span> <span class="nav-text">先行发生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同步"><span class="nav-number">5.</span> <span class="nav-text">同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#初始化"><span class="nav-number">5.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#创建goroutine"><span class="nav-number">5.2.</span> <span class="nav-text">创建goroutine</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#销毁goroutine"><span class="nav-number">5.3.</span> <span class="nav-text">销毁goroutine</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#channel通信"><span class="nav-number">5.4.</span> <span class="nav-text">channel通信</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#锁"><span class="nav-number">5.5.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#once"><span class="nav-number">5.6.</span> <span class="nav-text">Once</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#错误的同步方法"><span class="nav-number">5.7.</span> <span class="nav-text">错误的同步方法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tailnode</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a rel="external nofollow" class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("EVvRxWT61nN0pk43YjVJWFk3-gzGzoHsz", "7Jx2gDx8NjLMf8fApbTTg9lp");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

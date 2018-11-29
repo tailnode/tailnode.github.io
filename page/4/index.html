@@ -130,7 +130,7 @@
 
 
 
-  <title> tailnode 的博客 </title>
+  <title> Hexo, NexT - tailnode 的博客给岁月以文明，而不是给文明以岁月 </title>
 </head>
 
 <body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -303,7 +303,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/深入理解Go语言的slice/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解kubernetes的ConfigMap.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -325,8 +325,8 @@
             
               
                 
-                <a class="post-title-link" href="/2017/01/深入理解Go语言的slice/" itemprop="url">
-                  深入理解Go语言的slice
+                <a class="post-title-link" href="/blog/了解kubernetes的ConfigMap.html" itemprop="url">
+                  了解kubernetes的ConfigMap
                 </a>
               
             
@@ -360,7 +360,7 @@
 
           
           
-             <span id="/2017/01/深入理解Go语言的slice/" class="leancloud_visitors" data-flag-title="深入理解Go语言的slice">
+             <span id="/blog/了解kubernetes的ConfigMap.html" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -390,14 +390,13 @@
 
       
         
-          <p>先看这段代码，结果是<code>[0 2 3]</code>，很多人都能答对。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">modify</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    modify(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后稍微改动一下，再猜一下结果</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s = s[:<span class="built_in">len</span>(s)<span class="number">-1</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">    pop(s)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果认为输出<code>[1 2]</code>的话那么你错了，结果是<code>[1 2 3]</code>，你可能会觉得很奇怪，slice是引用语义这个在第一个例子中已经证明了，为什么第二个例子中又不是这样呢。</p>
+          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
+<h4 id="生成configmap">生成ConfigMap</h4>
+<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/深入理解Go语言的slice/#more" rel="contents">
+            <a class="btn" href="/blog/了解kubernetes的ConfigMap.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -443,7 +442,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/golang在编译时用ldflags设置变量的值/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解etcd.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -465,573 +464,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/01/golang在编译时用ldflags设置变量的值/" itemprop="url">
-                  golang在编译时用ldflags设置变量的值
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/golang在编译时用ldflags设置变量的值/" class="leancloud_visitors" data-flag-title="golang在编译时用ldflags设置变量的值">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>我们经常会在一些程序的输出中看到程序版本、编译时间、Git的commit id等信息，比如docker</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ming@vultr:~$ docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:      1.12.5</span><br><span class="line"> API version:  1.24</span><br><span class="line"> Go version:   go1.6.4</span><br><span class="line"> Git commit:   7392c3b</span><br><span class="line"> Built:        Fri Dec 16 02:42:17 2016</span><br><span class="line"> OS/Arch:      linux/amd64</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>我们可以提供一个配置文件<code>version.conf</code>，程序运行时从<code>version.conf</code>取得这些信息进行显示。但是在部署程序时，除了二进制文件还需要额外的配置文件，不是很方便。<br>
-或者将这些信息写入代码中，这样不需要额外的<code>version.conf</code>，但要在每次编译时修改代码文件，也够麻烦的了。<br>
-有一种更好的办法是在编译时使用参数<a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">-ldflags -X importpath.name=value</a>，官方解释如下</p>
-<blockquote>
-<p>-X importpath.name=value<br>
-Set the value of the string variable in importpath named name to value.<br>
-Note that before Go 1.5 this option took two separate arguments.<br>
-Now it takes one argument split on the first = sign.</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/golang在编译时用ldflags设置变量的值/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/beego orm中时区的问题/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/beego orm中时区的问题/" itemprop="url">
-                  beego orm中时区的问题
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/beego orm中时区的问题/" class="leancloud_visitors" data-flag-title="beego orm中时区的问题">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>先看简化后代码，下面只列出main函数</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    t := <span class="string">"2017-01-19 00:00:00"</span></span><br><span class="line">    o := orm.NewOrm()</span><br><span class="line"></span><br><span class="line">    qb, _ := orm.NewQueryBuilder(<span class="string">"mysql"</span>)</span><br><span class="line">    sql := qb.Select(<span class="string">"COUNT(*)"</span>).From(<span class="string">"test"</span>).Where(<span class="string">"create_time &gt; ?"</span>).String()</span><br><span class="line">    o.Raw(sql, t).Exec()</span><br><span class="line"></span><br><span class="line">    o.QueryTable(<span class="string">"test"</span>).Filter(<span class="string">"create_time__gt"</span>, t).Count()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这么看的话感觉两个SQL应该是相同的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ORM] - 2017-01-19 19:28:02 - [Queries/default] - [  OK /     db.Exec /     1.2ms] - [SELECT COUNT(*) FROM test WHERE create_time &gt; ?] - `2017-01-19 00:00:00`</span><br><span class="line">[ORM] - 2017-01-19 19:28:02 - [Queries/default] - [  OK / db.QueryRow /     2.3ms] - [SELECT COUNT(*) FROM `test` T0 WHERE T0.`create_time` &gt; ? ] - `2017-01-19 00:00:00`</span><br></pre></td></tr></table></figure>
-<p>我在本机测试OK，但在另一个环境SQL是这样的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ORM] - 2017-01-19 11:30:43 - [Queries/default] - [  OK /     db.Exec /     1.2ms] - [SELECT COUNT(*) FROM test WHERE create_time &gt; ?] - `2017-01-19 00:00:00`</span><br><span class="line">[ORM] - 2017-01-19 11:30:43 - [Queries/default] - [  OK / db.QueryRow /     1.2ms] - [SELECT COUNT(*) FROM `test` T0 WHERE T0.`create_time` &gt; ? ] - `2017-01-19 08:00:00`</span><br></pre></td></tr></table></figure>
-<p>相差8小时，第一时间想到时区问题，去有问题的环境一看果真如此。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/beego orm中时区的问题/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/ghost修改代码高亮和字体/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/ghost修改代码高亮和字体/" itemprop="url">
-                  ghost修改代码高亮和字体
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/ghost修改代码高亮和字体/" class="leancloud_visitors" data-flag-title="ghost修改代码高亮和字体">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>今天开始用ghost，发现默认主题（casper）并没有代码高亮功能，用起来相当不爽。google并看了看ghost主题的代码，找到了解决方法。</p>
-<p>在后台找到<code>Code Injection</code>，Blog Header和Blog Footer中分别加入一些代码即可。<br>
-<img src="https://github.com/tailnode/blog_static/raw/master/ghost/code-injection.png" alt=""></p>
-<h4 id="修改方法">修改方法</h4>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/ghost修改代码高亮和字体/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/golang闭包/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/golang闭包/" itemprop="url">
-                  golang闭包
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2017/01/golang闭包/" class="leancloud_visitors" data-flag-title="golang闭包">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>有如下函数，简单来说就是有错误则直接返回，没错误则执行<code>f</code>函数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *transaction)</span> <span class="title">Do</span><span class="params">(f <span class="keyword">func</span>()</span>) *<span class="title">transaction</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> t.fail || t.rollback || t.finish &#123;</span><br><span class="line">        <span class="keyword">return</span> t</span><br><span class="line">    &#125;</span><br><span class="line">    f()</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>函数很简单，但如何测试呢，简单但丑陋的方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Test_func</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">    isCalled := <span class="literal">false</span></span><br><span class="line">    f := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        isCalled = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    trans := New()</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    trans.Do(f)</span><br><span class="line">    <span class="comment">// check</span></span><br><span class="line">    <span class="keyword">if</span> isCalled &#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/golang闭包/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/了解etcd/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/01/了解etcd/" itemprop="url">
+                <a class="post-title-link" href="/blog/了解etcd.html" itemprop="url">
                   了解etcd
                 </a>
               
@@ -1066,7 +499,7 @@ Now it takes one argument split on the first = sign.</p>
 
           
           
-             <span id="/2017/01/了解etcd/" class="leancloud_visitors" data-flag-title="了解etcd">
+             <span id="/blog/了解etcd.html" class="leancloud_visitors" data-flag-title="了解etcd">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1114,7 +547,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcdctl get msg  </span><br><span class="line">msg</span><br><span class="line">Hello TenxCloud</span><br><span class="line">ming@ming:/tmp$ etcdctl del msg</span><br><span class="line">1</span><br><span class="line">ming@ming:/tmp$ etcdctl get msg</span><br><span class="line">ming@ming:/tmp$</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/了解etcd/#more" rel="contents">
+            <a class="btn" href="/blog/了解etcd.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1160,7 +593,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/了解kubernetes的ConfigMap/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/golang闭包.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1182,8 +615,8 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
             
               
                 
-                <a class="post-title-link" href="/2017/01/了解kubernetes的ConfigMap/" itemprop="url">
-                  了解kubernetes的ConfigMap
+                <a class="post-title-link" href="/blog/golang闭包.html" itemprop="url">
+                  golang闭包
                 </a>
               
             
@@ -1217,7 +650,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
           
           
-             <span id="/2017/01/了解kubernetes的ConfigMap/" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
+             <span id="/blog/golang闭包.html" class="leancloud_visitors" data-flag-title="golang闭包">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1247,13 +680,13 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
       
         
-          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
-<h4 id="生成configmap">生成ConfigMap</h4>
-<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
+          <p>有如下函数，简单来说就是有错误则直接返回，没错误则执行<code>f</code>函数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *transaction)</span> <span class="title">Do</span><span class="params">(f <span class="keyword">func</span>()</span>) *<span class="title">transaction</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> t.fail || t.rollback || t.finish &#123;</span><br><span class="line">        <span class="keyword">return</span> t</span><br><span class="line">    &#125;</span><br><span class="line">    f()</span><br><span class="line">    <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数很简单，但如何测试呢，简单但丑陋的方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Test_func</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">    isCalled := <span class="literal">false</span></span><br><span class="line">    f := <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        isCalled = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    trans := New()</span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">    trans.Do(f)</span><br><span class="line">    <span class="comment">// check</span></span><br><span class="line">    <span class="keyword">if</span> isCalled &#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/了解kubernetes的ConfigMap/#more" rel="contents">
+            <a class="btn" href="/blog/golang闭包.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1299,7 +732,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/Go的内存模型/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/golang在编译时用ldflags设置变量的值.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1321,7 +754,577 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
             
               
                 
-                <a class="post-title-link" href="/2017/01/Go的内存模型/" itemprop="url">
+                <a class="post-title-link" href="/blog/golang在编译时用ldflags设置变量的值.html" itemprop="url">
+                  golang在编译时用ldflags设置变量的值
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/golang在编译时用ldflags设置变量的值.html" class="leancloud_visitors" data-flag-title="golang在编译时用ldflags设置变量的值">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>我们经常会在一些程序的输出中看到程序版本、编译时间、Git的commit id等信息，比如docker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ming@vultr:~$ docker version</span><br><span class="line">Client:</span><br><span class="line"> Version:      1.12.5</span><br><span class="line"> API version:  1.24</span><br><span class="line"> Go version:   go1.6.4</span><br><span class="line"> Git commit:   7392c3b</span><br><span class="line"> Built:        Fri Dec 16 02:42:17 2016</span><br><span class="line"> OS/Arch:      linux/amd64</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>我们可以提供一个配置文件<code>version.conf</code>，程序运行时从<code>version.conf</code>取得这些信息进行显示。但是在部署程序时，除了二进制文件还需要额外的配置文件，不是很方便。<br>
+或者将这些信息写入代码中，这样不需要额外的<code>version.conf</code>，但要在每次编译时修改代码文件，也够麻烦的了。<br>
+有一种更好的办法是在编译时使用参数<a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">-ldflags -X importpath.name=value</a>，官方解释如下</p>
+<blockquote>
+<p>-X importpath.name=value<br>
+Set the value of the string variable in importpath named name to value.<br>
+Note that before Go 1.5 this option took two separate arguments.<br>
+Now it takes one argument split on the first = sign.</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/golang在编译时用ldflags设置变量的值.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/ghost修改代码高亮和字体.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/ghost修改代码高亮和字体.html" itemprop="url">
+                  ghost修改代码高亮和字体
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/ghost修改代码高亮和字体.html" class="leancloud_visitors" data-flag-title="ghost修改代码高亮和字体">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>今天开始用ghost，发现默认主题（casper）并没有代码高亮功能，用起来相当不爽。google并看了看ghost主题的代码，找到了解决方法。</p>
+<p>在后台找到<code>Code Injection</code>，Blog Header和Blog Footer中分别加入一些代码即可。<br>
+<img src="https://github.com/tailnode/blog_static/raw/master/ghost/code-injection.png" alt=""></p>
+<h4 id="修改方法">修改方法</h4>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/ghost修改代码高亮和字体.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/beego orm中时区的问题.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/beego orm中时区的问题.html" itemprop="url">
+                  beego orm中时区的问题
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/beego orm中时区的问题.html" class="leancloud_visitors" data-flag-title="beego orm中时区的问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>先看简化后代码，下面只列出main函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    t := <span class="string">"2017-01-19 00:00:00"</span></span><br><span class="line">    o := orm.NewOrm()</span><br><span class="line"></span><br><span class="line">    qb, _ := orm.NewQueryBuilder(<span class="string">"mysql"</span>)</span><br><span class="line">    sql := qb.Select(<span class="string">"COUNT(*)"</span>).From(<span class="string">"test"</span>).Where(<span class="string">"create_time &gt; ?"</span>).String()</span><br><span class="line">    o.Raw(sql, t).Exec()</span><br><span class="line"></span><br><span class="line">    o.QueryTable(<span class="string">"test"</span>).Filter(<span class="string">"create_time__gt"</span>, t).Count()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这么看的话感觉两个SQL应该是相同的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ORM] - 2017-01-19 19:28:02 - [Queries/default] - [  OK /     db.Exec /     1.2ms] - [SELECT COUNT(*) FROM test WHERE create_time &gt; ?] - `2017-01-19 00:00:00`</span><br><span class="line">[ORM] - 2017-01-19 19:28:02 - [Queries/default] - [  OK / db.QueryRow /     2.3ms] - [SELECT COUNT(*) FROM `test` T0 WHERE T0.`create_time` &gt; ? ] - `2017-01-19 00:00:00`</span><br></pre></td></tr></table></figure>
+<p>我在本机测试OK，但在另一个环境SQL是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ORM] - 2017-01-19 11:30:43 - [Queries/default] - [  OK /     db.Exec /     1.2ms] - [SELECT COUNT(*) FROM test WHERE create_time &gt; ?] - `2017-01-19 00:00:00`</span><br><span class="line">[ORM] - 2017-01-19 11:30:43 - [Queries/default] - [  OK / db.QueryRow /     1.2ms] - [SELECT COUNT(*) FROM `test` T0 WHERE T0.`create_time` &gt; ? ] - `2017-01-19 08:00:00`</span><br></pre></td></tr></table></figure>
+<p>相差8小时，第一时间想到时区问题，去有问题的环境一看果真如此。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/beego orm中时区的问题.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/docker容器间通信的一种方法.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/docker容器间通信的一种方法.html" itemprop="url">
+                  docker容器间通信的一种方法
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/docker容器间通信的一种方法.html" class="leancloud_visitors" data-flag-title="docker容器间通信的一种方法">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>以我的ghost博客为例进行说明，我在VPS上用docker启动了两个ghost博客，还有一个Nginx做反向代理，将两个域名分别指向两个博客。</p>
+<h4 id="docker启动命令">docker启动命令</h4>
+<p>ghost:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -e NODE_ENV=production --name ghost1 -v /path/to/data/ghost/ghost1/:/var/lib/ghost -d ghost</span><br><span class="line">docker run -e NODE_ENV=production --name ghost2 -v /path/to/data/ghost/ghost2/:/var/lib/ghost -d ghost</span><br></pre></td></tr></table></figure>
+<p>nginx:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80:80 --name nginx --link ghost1 --link ghost2 -v /path/to/data/nginx/nginx.conf:/etc/nginx/nginx.conf -d nginx</span><br></pre></td></tr></table></figure>
+<p>先启动两个ghost，然后启动nginx。使用–link参数将容器“链接”到一起，此参数会在容器中加入环境变量并在<code>/etc/hosts</code>中插入一条容器名与IP的映射</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@fabfd4bacfda:/# cat /etc/hosts</span><br><span class="line">172.17.0.3      ghost1 d19c0134011a</span><br><span class="line">172.17.0.5      ghost2 0e2e66ba70e0</span><br><span class="line">172.17.0.4      fabfd4bacfda</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/docker容器间通信的一种方法.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/Go的内存模型.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/Go的内存模型.html" itemprop="url">
                   Go的内存模型
                 </a>
               
@@ -1356,7 +1359,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
           
           
-             <span id="/2017/01/Go的内存模型/" class="leancloud_visitors" data-flag-title="Go的内存模型">
+             <span id="/blog/Go的内存模型.html" class="leancloud_visitors" data-flag-title="Go的内存模型">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1394,7 +1397,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 <p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/Go的内存模型/#more" rel="contents">
+            <a class="btn" href="/blog/Go的内存模型.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1440,7 +1443,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/2017/01/常用命令/">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/常用命令.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1462,7 +1465,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
             
               
                 
-                <a class="post-title-link" href="/2017/01/常用命令/" itemprop="url">
+                <a class="post-title-link" href="/blog/常用命令.html" itemprop="url">
                   常用命令
                 </a>
               
@@ -1497,7 +1500,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
           
           
-             <span id="/2017/01/常用命令/" class="leancloud_visitors" data-flag-title="常用命令">
+             <span id="/blog/常用命令.html" class="leancloud_visitors" data-flag-title="常用命令">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1531,7 +1534,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">scp复制多个文件，并且不需要输入yes</span><br><span class="line">scp  -o &quot;StrictHostKeyChecking no&quot; 20150603.tar.gz  20150627.tar.gz 20150705.tar.gz user@host:/home/users/log/20150715/`hostname`</span><br><span class="line"></span><br><span class="line">for i in `seq -f %02g 0 23`;do file=&quot;log/pay.log.20150731&quot;$i; echo $file;done</span><br><span class="line"></span><br><span class="line">查看svn密码~/.subversion/auth/svn.simple/48eed6299865c0af1dac26d1a6d79efa</span><br><span class="line"></span><br><span class="line">mutt发邮件mutt -e &quot;my_hdr content-type:text/html&quot; -s &quot;subject&quot; &quot;user@baidu.com&quot; &lt; mail.html</span><br><span class="line"></span><br><span class="line">列出文件中排名前10的行及数量 sort file | uniq -c | sort -k 1 -n -r | head -10</span><br><span class="line"></span><br><span class="line">格式化json输出`cat /tmp/json |python -m json.tool`</span><br><span class="line"></span><br><span class="line">输出文件指定行cat filename| head -n 3000 | tail -n +1000（显示1000行到3000行），cat filename | tail -n +3000 | head -n 1000（从第3000行开始，显示1000行。即显示3000~3999行）</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/常用命令/#more" rel="contents">
+            <a class="btn" href="/blog/常用命令.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1699,7 +1702,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
 
 <div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  由 <a rel="external nofollow" class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">

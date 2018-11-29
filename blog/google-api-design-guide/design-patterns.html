@@ -1,0 +1,1178 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next pisces" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="VYvdNdoeRCKzwBkNBludJVrQrnTHRTJKMRI4BZt86Ac">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="架构,翻译,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0">
+
+
+
+
+
+
+<meta name="description" content="翻译自 API Design Guide - Design Patterns  空响应体 标准的 Delete 方法 必须（must） 返回 google.protobuf.Empty 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 必须（must） 具有自己的 XxxResponse 消息，即使它们是空的，因为功能">
+<meta name="keywords" content="架构,翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google API 设计指南－设计模式">
+<meta property="og:url" content="https://tailnode.top/blog/google-api-design-guide/design-patterns.html">
+<meta property="og:site_name" content="tailnode 的博客">
+<meta property="og:description" content="翻译自 API Design Guide - Design Patterns  空响应体 标准的 Delete 方法 必须（must） 返回 google.protobuf.Empty 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 必须（must） 具有自己的 XxxResponse 消息，即使它们是空的，因为功能">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-29T01:54:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google API 设计指南－设计模式">
+<meta name="twitter:description" content="翻译自 API Design Guide - Design Patterns  空响应体 标准的 Delete 方法 必须（must） 返回 google.protobuf.Empty 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 必须（must） 具有自己的 XxxResponse 消息，即使它们是空的，因为功能">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'YAFGFO8GJT',
+      apiKey: 'f12750d1095dc6fb0c46a02f55dcd878',
+      indexName: 'hexo',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"在这里输入要搜索的内容","hits_empty":"没有 ${query} 的相关内容","hits_stats":"找到 ${hits} 条结果，用时 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://tailnode.top/blog/google-api-design-guide/design-patterns.html">
+
+
+
+
+
+  <title> Google API 设计指南－设计模式 | tailnode 的博客 </title>
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?2147b40a1ceec3a2fcebb5dc4cb67c50";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">tailnode 的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">给岁月以文明，而不是给文明以岁月</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="输入搜索内容..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/google-api-design-guide/design-patterns.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Google API 设计指南－设计模式
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-17T00:09:00+08:00">
+                2017-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/google-api-design-guide/design-patterns.html" class="leancloud_visitors" data-flag-title="Google API 设计指南－设计模式">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>翻译自 <a href="https://cloud.google.com/apis/design/design_patterns" target="_blank" rel="noopener">API Design Guide - Design Patterns</a></p>
+</blockquote>
+<h1>空响应体</h1>
+<p>标准的 <code>Delete</code> 方法 <strong>必须（must）</strong> 返回 <code>google.protobuf.Empty</code> 来实现全局一致性。它还可以防止客户端依赖于在重试期间不可用的附加元数据。因为随着时间推移对于自定义方法， 对于自定义方法，它们 <strong>必须（must）</strong> 具有自己的 <code>XxxResponse</code> 消息，即使它们是空的，因为功能很可能随着时间的推移而增加，并且需要返回附加数据。</p>
+<a id="more"></a>
+<h1>范围字段</h1>
+<p>表示范围的字段 <strong>应该（should）</strong> 使用符合命名约定的半开半闭区间 <code>[start_xxx, end_xxx)</code>，例如 <code>[start_key, end_key)</code> 或 <code>[start_time, end_time)</code>。C++ STL 和 Java 标准库经常使用半开半闭的语义。API <strong>应该（should）</strong> 避免使用表示区间的其他方法，例如 <code>(index, count)</code> 或 <code>[first, last]</code>。</p>
+<h1>资源标签</h1>
+<p>在面向资源的 API 中，资源结构由 API 定义。为了允许客户端向资源附加少量且简单的元数据（例如将一台虚拟机资源标记为数据库服务器），API <strong>应该（should）</strong> 使用在 <code>google.api.LabelDescriptor</code> 中描述的资源标签设计模式。</p>
+<p>API <strong>应该（should）</strong> 在资源定义中添加字段 <code>map&lt;string, string&gt; labels</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">message Book &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  map&lt;string, string&gt; labels = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>耗时操作</h1>
+<p>如果一个 API 方法需要花费较长时间运行，可以将其设计成向客户端返回一个表示长时间运行的资源，客户端可通过这个资源来获取操作的执行进度并取得执行结果。<a href="https://github.com/googleapis/googleapis/blob/master/google/longrunning/operations.proto" target="_blank" rel="noopener">Operation</a> 定义了耗时操作的标准接口。<strong>不能（must not）</strong> 为 API 使用自定义的耗时操作接口以免打破一致性。</p>
+<p>资源 <strong>必须（must）</strong> 作为响应消息直接返回，并且对资源操作的结果 <strong>应该（should）</strong> 反应在 API 中。例如：当创建资源时这个资源 <strong>应该（should）</strong> 显示在 LIST 和 GET 方法中，并且 <strong>应该（should）</strong> 指示出这个资源还没有准备好。如果方法不需要长期执行，当操作完成时 <code>Operation.response</code> 字段应该包含直接返回的消息。</p>
+<h1><span id="list_pagination">列表分页</span></h1>
+<p>即使结果集很小，可 LIST 的集合也 <strong>应该（should）</strong> 支持分页。</p>
+<p>理由：尽管向已有的 API 添加分页功能从 API 的视角来看是纯粹的增加功能，但它实际会改变行为。不知道有分页功能的已有客户端会错误地将取到的第一页数据当成全部数据。</p>
+<p>为了在 <code>List</code> 方法中支持分页， API <strong>应该（shall）</strong>：</p>
+<ul>
+<li>在 <code>List</code> 方法的请求信息中定义一个 <code>string</code> 字段 <code>page_token</code>。客户端通过这个字段来请求指定的某一页。</li>
+<li>在 <code>List</code> 方法的请求信息中定义一个 <code>int32</code> 字段 <code>page_size</code>。客户端通过这个字段来指定返回结果的最大数量。服务端可以进一步限制在单个页面中返回的最大结果数量。<code>page_size</code> 是 0 时，将由服务端决定返回结果的数量。</li>
+<li>在 <code>List</code> 方法的响应信息中定义一个 <code>string</code> 字段 <code>next_page_token</code>。这个字段表示取得下一页的页码。空字符串表示没有更多数据了。</li>
+</ul>
+<p>为了取得下一页的结果，客户端 <strong>应该（shall）</strong> 将响应中的 <code>next_page_token</code> 传入下次的请求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">rpc ListBooks(ListBooksRequest) returns (ListBooksResponse);</span><br><span class="line"></span><br><span class="line">message ListBooksRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  int32 page_size = 2;</span><br><span class="line">  string page_token = 3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ListBooksResponse &#123;</span><br><span class="line">  repeated Book books = 1;</span><br><span class="line">  string next_page_token = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当客户端在 query 参数传入除 page token 之外的参数时，如果 query 参数与 page token 不一致，服务 <strong>必须（must）</strong> 拒绝此请求。</p>
+<p>page token 的内容 <strong>应该（should）</strong> 是对 web 安全的 BASE64 编码后的 protocol buffer，这样就不会有兼容性问题。page token 中存在敏感信息时，<strong>应该（should）</strong> 将其加密。服务端 <strong>必须（must）</strong> 通过以下方法来防止通过篡改 page token 来获取敏感信息的问题：</p>
+<ul>
+<li>根据后续请求指定 query 参数</li>
+<li>在 page token 中仅引用服务端的状态</li>
+<li>在 page token 中加密并签名 query 参数，并且在每次调用中对这些参数进行验证和鉴权</li>
+</ul>
+<p>分页功能也 <strong>可以（may）</strong> 在响应中通过名为 <code>total_size</code> 类型为 <code>int32</code> 的字段来提供查询资源的总数量。</p>
+<h1>列出子集合</h1>
+<p>API 有时需要客户端对子集合进行 <code>List/Search</code> 操作。例如一个 API 有<code>书架</code>集合，每个书架有<code>书</code>的集合，客户端想要在所有书架中搜索一本书。这种情况下推荐在子集合上使用标准的 <code>List</code>，并且为父集合指定通配符 <code>&quot;-&quot;</code>。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET https://library.googleapis.com/v1/shelves/-/books?filter=xxx</span><br></pre></td></tr></table></figure>
+<p>注意：使用 <code>&quot;-&quot;</code> 而非 <code>&quot;*&quot;</code> 是为了避免 URL 转义。</p>
+<h1>从子集合中取得唯一资源</h1>
+<p>有时子集合中的资源具有在其父集合内唯一的标识符，在这种情况下通过 <code>Get</code> 来取得某资源而不需要知道它的父集合可能是有用的。在这种情况下，建议使用标准 <code>Get</code>，并为资源唯一的所有父集合指定通配符 <code>&quot;-&quot;</code>。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET https://library.googleapis.com/v1/shelves/-/books/&#123;id&#125;</span><br></pre></td></tr></table></figure>
+<p>响应 <strong>必须（must）</strong> 使用资源的带有父集合标识符的规范名称。例如上面的请求应该返回名称类似 <code>shelves/shelf713/books/book8141</code> 的资源，而不是 <code>shelves/-/books/book8141</code>。</p>
+<h1><span id="sorting_order">排序</span></h1>
+<p>如果 API 方法允许客户端指定列表结果的排序顺序，请求消息中 <strong>应该（should）</strong> 包含如下字段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string order_by = ...;</span><br></pre></td></tr></table></figure>
+<p>这个值 <strong>应该（should）</strong> 遵循 SQL 语法：用逗号分隔的字段列表。例如：<code>&quot;foo,bar&quot;</code>。默认升序排列。<strong>应该（should）</strong> 给字段添加后缀 <code>&quot; desc&quot;</code> 来表示降序。例如：<code>&quot;foo desc,bar&quot;</code>。</p>
+<p>多余的空格可以忽略，<code>&quot;foo,bar desc&quot;</code> 和 <code>&quot; foo , bar desc &quot;</code>是相等的。</p>
+<h1>请求校验</h1>
+<p>如果 API 方法有副作用，并且需要仅验证请求而不产生副作用，请求消息 <strong>应该（should）</strong> 包含一个字段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bool validate_only = ...;</span><br></pre></td></tr></table></figure>
+<p>当此字段设置为 <code>true</code> 时，服务端 <strong>一定不要（must not）</strong> 执行任何有副作用的操作，而是对请求进行校验。</p>
+<p>校验成功时 <strong>一定（must）</strong> 要返回<code>google.rpc.Code.OK</code>，并且使用相同请求信息的完整请求 <strong>不应该（should not）</strong> 返回 <code>google.rpc.Code.INVALID_ARGUMENT</code>。注意，可能因为其他错误（比如 <code>google.rpc.Code.ALREADY_EXISTS</code> 或竞态条件）此请求还是会失败。</p>
+<h1>请求重入</h1>
+<p>对于网络 API，幂等是很重要的，因为当有网络异常时它们能够安全地进行重试。然而一些 API 并不容易实现幂等性，例如需要避免不必要重复的创建资源操作。对于这类情况，请求信息 <strong>应该（should）</strong> 包含一个唯一 ID（例如 UUID），这样服务端能够通过此 ID 来检测重复，保证请求只被处理一次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 服务端用于检测重复请求的唯一 ID</span><br><span class="line">// 此字段应该命名为 `request_id`</span><br><span class="line">string request_id = ...;</span><br></pre></td></tr></table></figure>
+<p>因为客户端很可能没有接收到之前的响应，所以当检测到重复请求后，服务端 <strong>应该（should）</strong> 返回之前成功的响应。</p>
+<h1>枚举默认值</h1>
+<p>每个枚举定义 <strong>必须（must）</strong> 以 <code>0</code> 值开始，用于当枚举值没有明确指定时。API <strong>必须（must）</strong> 在文档中说明如何处理 <code>0</code> 值。</p>
+<p>如果有通用的默认行为，<strong>应该（should）</strong> 使用枚举值 <code>0</code>。API 应该在文档中说明期待的行为。</p>
+<p>如果没有通用的默认行为，枚举值 <code>0</code> <strong>应该（should）</strong> 命名为 <code>ENUM_TYPE_UNSPECIFIED</code> 并且和错误 <code>INVALID_ARGUMENT</code> 一起使用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">enum Isolation &#123;</span><br><span class="line">  // 未指定</span><br><span class="line">  ISOLATION_UNSPECIFIED = 0;</span><br><span class="line">  // 快照读。如果所有读写都不能在并发事务中逻辑地序列化，则会发生冲突</span><br><span class="line">  SERIALIZABLE = 1;</span><br><span class="line">  // 快照读。并发事务向同一行写入时导致冲突</span><br><span class="line">  SNAPSHOT = 2;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 当未指定时，服务器将使用 SNAPSHOT 或更高的隔离级别</span><br><span class="line">Isolation level = 1;</span><br></pre></td></tr></table></figure>
+<p>一个惯用名称 <strong>可以（may）</strong> 用于 <code>0</code> 值，例如，<code>google.rpc.Code.OK</code> 是指定不存在错误的惯用方法。在这种情况下，<code>OK</code> 与枚举类型中的 <code>UNSPECIFIED</code> 在语义上是相等的。</p>
+<p>在存在本质上合理和安全的默认情况下，<strong>可以（may）</strong> 使用 <code>0</code> 值。例如，在<a href="">资源视图</a>枚举中 <code>BASIC</code> 是 <code>0</code> 值。</p>
+<h1>语法句法</h1>
+<p>在某些 API 设计中，有必要为某些数据格式定义简单的语法，例如可接受的文本输入。为了在不同 API 中提供一致的开发体验和减少学习曲线，API 设计者 <strong>必须（must）</strong> 使用 <a href="http://www.iso.org/iso/catalogue_detail?csnumber=26153" target="_blank" rel="noopener">ISO 14977</a> 扩展的 Backus-Naur 表格（EBNF）句法来定义这些语法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Production  = name &quot;=&quot; [ Expression ] &quot;;&quot; ;</span><br><span class="line">Expression  = Alternative &#123; &quot;|&quot; Alternative &#125; ;</span><br><span class="line">Alternative = Term &#123; Term &#125; ;</span><br><span class="line">Term        = name | TOKEN | Group | Option | Repetition ;</span><br><span class="line">Group       = &quot;(&quot; Expression &quot;)&quot; ;</span><br><span class="line">Option      = &quot;[&quot; Expression &quot;]&quot; ;</span><br><span class="line">Repetition  = &quot;&#123;&quot; Expression &quot;&#125;&quot; ;</span><br></pre></td></tr></table></figure>
+<p>注意：<code>TOKEN</code> 表示在语法之外定义的终端。</p>
+<h1>整数类型</h1>
+<p>在API 设计中，<strong>不应该（should not）</strong> 使用像 <code>uint32</code> 和 <code>fixed32</code> 这种无符号整型，这是因为一些重要的编程语言和系统（例如 Java, JavaScript 和 OpenAPI）不能很好地支持它们并且更容易导致溢出的问题。另一个问题是，不同的 API 很可能对同一个资源使用不匹配的有符号和无符号类型。</p>
+<p>在大小和时间这种负数没有意义的类型中 <strong>可以（may）</strong> 使用且仅使用 <code>-1</code> 来表示特定的意义，例如到在文件结尾（EOF）、无穷的时间、无资源限额或未知的年纪。当这样使用负数时，<strong>必须（must）</strong> 在文档中明确说明以防止混淆。API 生成器也应该在文档中记录隐式默认值 <code>0</code> 表示的行为。</p>
+<h1>部分响应</h1>
+<p>客户端有时只需要响应信息中的特定子集。一些 API 平台提供了对部分响应的原生支持。Google API 平台通过响应字段掩码来提供支持。对于任一 REST API 调用，有一个隐式的系统 query 参数 <code>$fields</code>，它是 <code>google.protobuf.FieldMask</code> 的 JSON 表示。在返回给客户端之前，响应消息会被 <code>$fields</code> 字段过滤。此行为是在 API 平台自动执行的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET https://library.googleapis.com/v1/shelves?$fields=name</span><br></pre></td></tr></table></figure>
+<h1>资源视图</h1>
+<p>为了减少网络流量，允许客户端限制服务器在其响应中返回的资源的哪些部分是有用的，返回资源的视图而不是全部资源表示。API 中的资源视图是通过向请求添加参数来实现的，该参数允许客户端在响应中指定要接收资源的哪个视图。</p>
+<p>此参数：</p>
+<ul>
+<li><strong>应该（should）</strong> 是枚举类型</li>
+<li><strong>必须（must）</strong> 命名为 <code>view</code></li>
+</ul>
+<p>枚举中的每个值定义了资源的哪部分（字段）在响应中会被返回。文档中 <strong>应该（should）</strong> 明确记录每个 <code>view</code> 值会返回什么。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">package google.example.library.v1;</span><br><span class="line"></span><br><span class="line">service Library &#123;</span><br><span class="line">  rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) &#123;</span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      get: &quot;/v1/&#123;name=shelves/*&#125;/books&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">enum BookView &#123;</span><br><span class="line">  // 响应中只包含作者、标题、ISBN 和唯一的图书 ID。这是默认值。</span><br><span class="line">  BASIC = 0;</span><br><span class="line"></span><br><span class="line">  // 返回所有信息，包括书中的内容</span><br><span class="line">  FULL = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message ListBooksRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line"></span><br><span class="line">  // 指定返回图书资源的哪些部分</span><br><span class="line">  BookView view = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应的 URL：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET https://library.googleapis.com/v1/shelves/shelf1/books?view=BASIC</span><br></pre></td></tr></table></figure>
+<p>可以在 <a href="https://tailnode.top/2017/03/google-api-design-guide/standard-methods/">标准方法</a> 一章中查看更多关于方法定义、请求和响应的内容。</p>
+<h1>ETag</h1>
+<p>ETag 是一个不透明的标识符，允许客户端进行条件请求。为了支持 ETag，API <strong>应该（should）</strong> 在资源定义中包含一个字符串字段 <code>etag</code>，它的语义 <strong>必须(must)</strong> 与 ETag的常用用法相匹配。通常，<code>etag</code> 包含由服务器计算出的资源指纹。更多详细信息，请参阅<a href="https://en.wikipedia.org/wiki/HTTP_ETag" target="_blank" rel="noopener">维基百科</a>和 <a href="https://tools.ietf.org/html/rfc7232#section-2.3" target="_blank" rel="noopener">RFC 7232</a>。</p>
+<p>ETags 可以强验证或弱验证，其中弱验证的ETag 以 <code>W /</code> 为前缀。在这种情况下，强验证意味着具有相同 ETag 的两个资源具有相同的内容和相同的额外字段（Content-Type）。这意味着强验证的 ETag 允许缓存稍后组装的部分响应。</p>
+<p>相反，具有相同弱验证 ETag 值的资源意味着这些表示在语义上是等效的，但不一定每字节都相同，因此不适合于字节范围请求的响应缓存。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 强验证的 ETag（包含引号）</span><br><span class="line">&quot;1a2f3e4d5b6c7c&quot;</span><br><span class="line">// 弱验证的 ETag（包含前缀和引号）</span><br><span class="line">W/&quot;1a2b3c4d5ef&quot;</span><br></pre></td></tr></table></figure>
+<h1>输出字段</h1>
+<p>API 可能希望将由客户端提供的字段和只由服务端在特定资源上返回的字段进行区分。对于仅输出的字段，**必须（shall）**记录字段属性。</p>
+<p>请注意，如果客户端在请求中设置了仅输出（output only）字段，或者客户端使用仅输出字段指定了一个 <code>google.protobuf.FieldMask</code>，则服务器 <strong>必须（must）</strong> 接受该请求而不能出错。这意味着服务器 <strong>必须（must）</strong> 忽略仅输出字段的存在及其任何指示。这个建议的原因是因为客户端通常会将服务器返回的资源重用为另一个请求的输入，例如一个获取到的 <code>Book</code> 将在 UPDATE 方法中被再次使用。如果要验证仅输出字段，客户端需要做清除输出字段的额外工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">message Book &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">  // 只用做输出</span><br><span class="line">  Timestamp create_time = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://tailnode.top/2017/03/google-api-design-guide/contents/">查看其他章节</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.jpg" alt="tailnode WeChat Pay">
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay.jpg" alt="tailnode Alipay">
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      tailnode
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://tailnode.top/blog/google-api-design-guide/design-patterns.html" title="Google API 设计指南－设计模式">https://tailnode.top/blog/google-api-design-guide/design-patterns.html</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/架构/" rel="tag"># 架构</a>
+          
+            <a href="/tags/翻译/" rel="tag"># 翻译</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/blog/golang struct 转 json 时如何忽略部分字段.html" rel="next" title="golang struct 转 json 时如何忽略部分字段">
+                <i class="fa fa-chevron-left"></i> golang struct 转 json 时如何忽略部分字段
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/blog/google-api-design-guide/documentation.html" rel="prev" title="Google API 设计指南－文档">
+                Google API 设计指南－文档 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODE2MC80NzMz"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="tailnode">
+          <p class="site-author-name" itemprop="name">tailnode</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">39</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/tailnode" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:minghe1024@126.com" target="_blank" title="Email">
+                  
+                    <i class="fa fa-fw fa-envelope-o"></i>
+                  
+                  Email
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">空响应体</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">范围字段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">资源标签</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">耗时操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">5.</span> <span class="nav-text">列表分页</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">6.</span> <span class="nav-text">列出子集合</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">7.</span> <span class="nav-text">从子集合中取得唯一资源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">8.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">9.</span> <span class="nav-text">请求校验</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">10.</span> <span class="nav-text">请求重入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">11.</span> <span class="nav-text">枚举默认值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">12.</span> <span class="nav-text">语法句法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">13.</span> <span class="nav-text">整数类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">14.</span> <span class="nav-text">部分响应</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">15.</span> <span class="nav-text">资源视图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">16.</span> <span class="nav-text">ETag</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">17.</span> <span class="nav-text">输出字段</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">tailnode</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a rel="external nofollow" class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("EVvRxWT61nN0pk43YjVJWFk3-gzGzoHsz", "7Jx2gDx8NjLMf8fApbTTg9lp");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
