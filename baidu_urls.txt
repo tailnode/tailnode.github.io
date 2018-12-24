@@ -1,39 +1,3 @@
 https://tailnode.top/blog/一次事故.html
 https://tailnode.top/blog/grpc-go client 打印请求的耗时.html
 https://tailnode.top/blog/json.Marshal 忽略 omitempty 的方法.html
-https://tailnode.top/blog/记录一次性能优化.html
-https://tailnode.top/blog/Go 中的一些坑.html
-https://tailnode.top/blog/go-compare-op.html
-https://tailnode.top/blog/unblocked_chan.html
-https://tailnode.top/blog/google-api-design-guide/glossary.html
-https://tailnode.top/blog/google-api-design-guide/file-structure.html
-https://tailnode.top/blog/google-api-design-guide/directory-structure.html
-https://tailnode.top/blog/google-api-design-guide/compatibility.html
-https://tailnode.top/blog/google-api-design-guide/versioning.html
-https://tailnode.top/blog/google-api-design-guide/proto3.html
-https://tailnode.top/blog/google-api-design-guide/documentation.html
-https://tailnode.top/blog/google-api-design-guide/design-patterns.html
-https://tailnode.top/blog/golang struct 转 json 时如何忽略部分字段.html
-https://tailnode.top/blog/google-api-design-guide/naming-conventions.html
-https://tailnode.top/blog/google-api-design-guide/errors.html
-https://tailnode.top/blog/google-api-design-guide/standard-fields.html
-https://tailnode.top/blog/google-api-design-guide/custom-methods.html
-https://tailnode.top/blog/google-api-design-guide/standard-methods.html
-https://tailnode.top/blog/google-api-design-guide/resource-names.html
-https://tailnode.top/blog/google-api-design-guide/resource-oriented-design.html
-https://tailnode.top/blog/google-api-design-guide/introduction.html
-https://tailnode.top/blog/google-api-design-guide/contents.html
-https://tailnode.top/blog/alertmanager报警规则详解.html
-https://tailnode.top/blog/alertmanager邮件模版.html
-https://tailnode.top/blog/k8s-apiserver.html
-https://tailnode.top/blog/IDEA使用技巧收集.html
-https://tailnode.top/blog/深入理解Go语言的slice.html
-https://tailnode.top/blog/了解kubernetes的ConfigMap.html
-https://tailnode.top/blog/了解etcd.html
-https://tailnode.top/blog/golang闭包.html
-https://tailnode.top/blog/golang在编译时用ldflags设置变量的值.html
-https://tailnode.top/blog/ghost修改代码高亮和字体.html
-https://tailnode.top/blog/beego orm中时区的问题.html
-https://tailnode.top/blog/docker容器间通信的一种方法.html
-https://tailnode.top/blog/Go的内存模型.html
-https://tailnode.top/blog/常用命令.html
