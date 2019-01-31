@@ -95,7 +95,7 @@
 <meta property="og:site_name" content="tailnode 的博客">
 <meta property="og:description" content="每种语言都有“坑”，有些是语言设计问题，有些是使用者的问题。不管如何，了解这些东西后能让我们的代码更健壮，BUG更少。 资源泄漏 time.Tick() func Tick(d Duration) &amp;lt;-chan Time可用来做定时器，官网上的示例如下： 1234c := time.Tick(1 * time.Minute)for now := range c &amp;#123;        f">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T13:57:18.000Z">
+<meta property="og:updated_time" content="2019-01-31T13:37:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go 中的一些坑">
 <meta name="twitter:description" content="每种语言都有“坑”，有些是语言设计问题，有些是使用者的问题。不管如何，了解这些东西后能让我们的代码更健壮，BUG更少。 资源泄漏 time.Tick() func Tick(d Duration) &amp;lt;-chan Time可用来做定时器，官网上的示例如下： 1234c := time.Tick(1 * time.Minute)for now := range c &amp;#123;        f">
@@ -414,7 +414,15 @@
 <p>使用 make 创建 slice 时，可以指定 slice 的容量，减少 append 时重新分配内存的次数。但如果代码是这样写的，那就会引入BUG：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">3</span>)</span><br><span class="line">    s = <span class="built_in">append</span>(s, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">    fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上面代码会打印出：<code>[0 0 0 1 2 3]</code>，因为 make 只指定了两个参数，这样 slice 的长度和容量都是 3，即 s 中已经有了三个值为 0 的元素。</p>
-
+<h1>rand.NewSource() 不是并发安全的</h1>
+<p>使用随机数时一般习惯用当前的时间戳做为种子写成这样 <code>r := rand.New(rand.NewSource(time.Now().Unix()))</code>，之后再使用 <code>r.Int()</code> 等函数生成随机数，但这不是并发安全的，<code>rand.NewSource()</code> 的注释如下：</p>
+<blockquote>
+<p>// NewSource returns a new pseudo-random Source seeded with the given value.<br>
+// Unlike the default Source used by top-level functions, this source is not<br>
+// safe for concurrent use by multiple goroutines.</p>
+</blockquote>
+<p>如果直接使用 rand 包的随机数函数就没有问题，是因为 rand 包使用的全局变量定义成 <code>var globalRand = New(&amp;lockedSource{src: NewSource(1).(Source64)})</code>，lockedSource 是有锁的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type lockedSource struct &#123;</span><br><span class="line">    lk  sync.Mutex</span><br><span class="line">    src Source64</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -667,7 +675,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">资源泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#time-tick"><span class="nav-number">1.1.</span> <span class="nav-text">time.Tick()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">更新 map 中的值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">make slice 时的参数</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">资源泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#time-tick"><span class="nav-number">1.1.</span> <span class="nav-text">time.Tick()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">2.</span> <span class="nav-text">更新 map 中的值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">3.</span> <span class="nav-text">make slice 时的参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#undefined"><span class="nav-number">4.</span> <span class="nav-text">rand.NewSource() 不是并发安全的</span></a></li></ol></div>
             
 
           </div>
@@ -690,7 +698,7 @@
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-gamepad"></i>
   </span>

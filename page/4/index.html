@@ -303,6 +303,145 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/ghost修改代码高亮和字体.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/ghost修改代码高亮和字体.html" itemprop="url">
+                  ghost修改代码高亮和字体
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/ghost修改代码高亮和字体.html" class="leancloud_visitors" data-flag-title="ghost修改代码高亮和字体">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>今天开始用ghost，发现默认主题（casper）并没有代码高亮功能，用起来相当不爽。google并看了看ghost主题的代码，找到了解决方法。</p>
+<p>在后台找到<code>Code Injection</code>，Blog Header和Blog Footer中分别加入一些代码即可。<br>
+<img src="https://github.com/tailnode/blog_static/raw/master/ghost/code-injection.png" alt=""></p>
+<h4 id="修改方法">修改方法</h4>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/ghost修改代码高亮和字体.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/docker容器间通信的一种方法.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -446,7 +585,7 @@
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/ghost修改代码高亮和字体.html">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解kubernetes的ConfigMap.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -468,8 +607,8 @@
             
               
                 
-                <a class="post-title-link" href="/blog/ghost修改代码高亮和字体.html" itemprop="url">
-                  ghost修改代码高亮和字体
+                <a class="post-title-link" href="/blog/了解kubernetes的ConfigMap.html" itemprop="url">
+                  了解kubernetes的ConfigMap
                 </a>
               
             
@@ -503,7 +642,7 @@
 
           
           
-             <span id="/blog/ghost修改代码高亮和字体.html" class="leancloud_visitors" data-flag-title="ghost修改代码高亮和字体">
+             <span id="/blog/了解kubernetes的ConfigMap.html" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -533,154 +672,13 @@
 
       
         
-          <p>今天开始用ghost，发现默认主题（casper）并没有代码高亮功能，用起来相当不爽。google并看了看ghost主题的代码，找到了解决方法。</p>
-<p>在后台找到<code>Code Injection</code>，Blog Header和Blog Footer中分别加入一些代码即可。<br>
-<img src="https://github.com/tailnode/blog_static/raw/master/ghost/code-injection.png" alt=""></p>
-<h4 id="修改方法">修改方法</h4>
+          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
+<h4 id="生成configmap">生成ConfigMap</h4>
+<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/blog/ghost修改代码高亮和字体.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/Go的内存模型.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/blog/Go的内存模型.html" itemprop="url">
-                  Go的内存模型
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/blog/Go的内存模型.html" class="leancloud_visitors" data-flag-title="Go的内存模型">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h4 id="说明">说明</h4>
-<p>翻译自<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">The Go Memory Model</a></p>
-<h4 id="介绍">介绍</h4>
-<p>如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。</p>
-<h4 id="建议">建议</h4>
-<p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/blog/Go的内存模型.html#more" rel="contents">
+            <a class="btn" href="/blog/了解kubernetes的ConfigMap.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1014,7 +1012,7 @@ Now it takes one argument split on the first = sign.</p>
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解etcd.html">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/常用命令.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1036,8 +1034,8 @@ Now it takes one argument split on the first = sign.</p>
             
               
                 
-                <a class="post-title-link" href="/blog/了解etcd.html" itemprop="url">
-                  了解etcd
+                <a class="post-title-link" href="/blog/常用命令.html" itemprop="url">
+                  常用命令
                 </a>
               
             
@@ -1071,7 +1069,7 @@ Now it takes one argument split on the first = sign.</p>
 
           
           
-             <span id="/blog/了解etcd.html" class="leancloud_visitors" data-flag-title="了解etcd">
+             <span id="/blog/常用命令.html" class="leancloud_visitors" data-flag-title="常用命令">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1101,164 +1099,11 @@ Now it takes one argument split on the first = sign.</p>
 
       
         
-          <h2 id="说明">说明</h2>
-<p>这是一篇非常入门的文章，让你大概了解一下etcd。写这篇文章时使用etcd的版本是3.1.0。<br>
-etcd是以实现共享配置和服务发现为目的，提供一致性的键值存储的分布式数据库。kubernetes等项目使用了etcd。</p>
-<h2 id="下载安装">下载安装</h2>
-<p>去<a href="https://github.com/coreos/etcd/releases" target="_blank" rel="noopener">这里</a>下载release包，解压后是一些文档和两个二进制文件etcd和etcdctl。etcd是server端，etcdctl是客户端。将etcd和etcdctl加入PATH路径方便我们执行命令。</p>
-<h2 id="运行server">运行server</h2>
-<p>执行命令etcd，即可启动server</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcd</span><br><span class="line">2017-02-14 14:04:40.164639 I | etcdmain: etcd Version: 3.1.0</span><br><span class="line">2017-02-14 14:04:40.164725 I | etcdmain: Git SHA: 8ba2897</span><br><span class="line">2017-02-14 14:04:40.164736 I | etcdmain: Go Version: go1.7.4</span><br><span class="line">2017-02-14 14:04:40.164776 I | etcdmain: Go OS/Arch: linux/amd64</span><br><span class="line">2017-02-14 14:04:40.164784 I | etcdmain: setting maximum number of CPUs to 4, total number of available CPUs is 4</span><br><span class="line">2017-02-14 14:04:40.164850 W | etcdmain: no data-dir provided, using default data-dir ./default.etcd</span><br><span class="line">2017-02-14 14:04:40.164934 I | etcdmain: advertising using detected default host &quot;192.168.1.124&quot;</span><br><span class="line">2017-02-14 14:04:40.165855 I | embed: listening for peers on http://localhost:2380</span><br><span class="line">2017-02-14 14:04:40.167090 I | embed: listening for client requests on localhost:2379</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
-<h2 id="etcdctl">etcdctl</h2>
-<p>说明：etcd最新的API版本是v3。与v2相比，v3更高效更清晰。设置环境变量ETCDCTL_API=3。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ export ETCDCTL_API=3</span><br><span class="line">ming@ming:/tmp$ etcdctl version</span><br><span class="line">etcdctl version: 3.1.0</span><br><span class="line">API version: 3.1</span><br></pre></td></tr></table></figure>
-<h3 id="键值对命令">键值对命令</h3>
-<p><code>put</code>设置key，<code>get</code>取得key</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcdctl put msg &quot;Hello TenxCloud&quot;</span><br><span class="line">OK</span><br><span class="line">ming@ming:/tmp$ etcdctl get msg  </span><br><span class="line">msg</span><br><span class="line">Hello TenxCloud</span><br></pre></td></tr></table></figure>
-<p><code>del</code>删除key</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcdctl get msg  </span><br><span class="line">msg</span><br><span class="line">Hello TenxCloud</span><br><span class="line">ming@ming:/tmp$ etcdctl del msg</span><br><span class="line">1</span><br><span class="line">ming@ming:/tmp$ etcdctl get msg</span><br><span class="line">ming@ming:/tmp$</span><br></pre></td></tr></table></figure>
+          <h2 id="shell">shell</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">scp复制多个文件，并且不需要输入yes</span><br><span class="line">scp  -o &quot;StrictHostKeyChecking no&quot; 20150603.tar.gz  20150627.tar.gz 20150705.tar.gz user@host:/home/users/log/20150715/`hostname`</span><br><span class="line"></span><br><span class="line">for i in `seq -f %02g 0 23`;do file=&quot;log/pay.log.20150731&quot;$i; echo $file;done</span><br><span class="line"></span><br><span class="line">查看svn密码~/.subversion/auth/svn.simple/48eed6299865c0af1dac26d1a6d79efa</span><br><span class="line"></span><br><span class="line">mutt发邮件mutt -e &quot;my_hdr content-type:text/html&quot; -s &quot;subject&quot; &quot;user@baidu.com&quot; &lt; mail.html</span><br><span class="line"></span><br><span class="line">列出文件中排名前10的行及数量 sort file | uniq -c | sort -k 1 -n -r | head -10</span><br><span class="line"></span><br><span class="line">格式化json输出`cat /tmp/json |python -m json.tool`</span><br><span class="line"></span><br><span class="line">输出文件指定行cat filename| head -n 3000 | tail -n +1000（显示1000行到3000行），cat filename | tail -n +3000 | head -n 1000（从第3000行开始，显示1000行。即显示3000~3999行）</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/blog/了解etcd.html#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解kubernetes的ConfigMap.html">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tailnode">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="tailnode 的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/blog/了解kubernetes的ConfigMap.html" itemprop="url">
-                  了解kubernetes的ConfigMap
-                </a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
-                2017-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/blog/了解kubernetes的ConfigMap.html" class="leancloud_visitors" data-flag-title="了解kubernetes的ConfigMap">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>许多服务在启动/运行时需要读取配置文件、环境变量或命令行参数等信息，我们可以很方便地使用ConfigMap为pod完成这些配置信息的设置与更新。通过下面的例子来了解下ConfigMap吧。</p>
-<h4 id="生成configmap">生成ConfigMap</h4>
-<p>有两个文件<code>info1</code>  <code>info2</code>保存了配置信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ming@ming-master:~/temp/configmap$ ls</span><br><span class="line">info1  info2</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info1 </span><br><span class="line">name=mengyuan</span><br><span class="line">corp=tenxcloud</span><br><span class="line">ming@ming-master:~/temp/configmap$ cat info2 </span><br><span class="line">name=wanglei</span><br><span class="line">corp=tenxcloud</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/blog/了解kubernetes的ConfigMap.html#more" rel="contents">
+            <a class="btn" href="/blog/常用命令.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1443,7 +1288,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
   
 
   <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/常用命令.html">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/Go的内存模型.html">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tailnode">
@@ -1465,8 +1310,8 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
             
               
                 
-                <a class="post-title-link" href="/blog/常用命令.html" itemprop="url">
-                  常用命令
+                <a class="post-title-link" href="/blog/Go的内存模型.html" itemprop="url">
+                  Go的内存模型
                 </a>
               
             
@@ -1500,7 +1345,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
           
           
-             <span id="/blog/常用命令.html" class="leancloud_visitors" data-flag-title="常用命令">
+             <span id="/blog/Go的内存模型.html" class="leancloud_visitors" data-flag-title="Go的内存模型">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1530,11 +1375,166 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
 
       
         
-          <h2 id="shell">shell</h2>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">scp复制多个文件，并且不需要输入yes</span><br><span class="line">scp  -o &quot;StrictHostKeyChecking no&quot; 20150603.tar.gz  20150627.tar.gz 20150705.tar.gz user@host:/home/users/log/20150715/`hostname`</span><br><span class="line"></span><br><span class="line">for i in `seq -f %02g 0 23`;do file=&quot;log/pay.log.20150731&quot;$i; echo $file;done</span><br><span class="line"></span><br><span class="line">查看svn密码~/.subversion/auth/svn.simple/48eed6299865c0af1dac26d1a6d79efa</span><br><span class="line"></span><br><span class="line">mutt发邮件mutt -e &quot;my_hdr content-type:text/html&quot; -s &quot;subject&quot; &quot;user@baidu.com&quot; &lt; mail.html</span><br><span class="line"></span><br><span class="line">列出文件中排名前10的行及数量 sort file | uniq -c | sort -k 1 -n -r | head -10</span><br><span class="line"></span><br><span class="line">格式化json输出`cat /tmp/json |python -m json.tool`</span><br><span class="line"></span><br><span class="line">输出文件指定行cat filename| head -n 3000 | tail -n +1000（显示1000行到3000行），cat filename | tail -n +3000 | head -n 1000（从第3000行开始，显示1000行。即显示3000~3999行）</span><br></pre></td></tr></table></figure>
+          <h4 id="说明">说明</h4>
+<p>翻译自<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">The Go Memory Model</a></p>
+<h4 id="介绍">介绍</h4>
+<p>如何保证在一个goroutine中看到在另一个goroutine修改的变量的值，这篇文章进行了详细说明。</p>
+<h4 id="建议">建议</h4>
+<p>如果程序中修改数据时有其他goroutine同时读取，那么必须将读取串行化。为了串行化访问，请使用channel或其他同步原语，例如<a href="https://golang.org/pkg/sync/" target="_blank" rel="noopener">sync</a>和<a href="https://golang.org/pkg/sync/atomic/" target="_blank" rel="noopener">sync/atomic</a>来保护数据。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/blog/常用命令.html#more" rel="contents">
+            <a class="btn" href="/blog/Go的内存模型.html#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope="" itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://tailnode.top/blog/了解etcd.html">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tailnode">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="tailnode 的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/blog/了解etcd.html" itemprop="url">
+                  了解etcd
+                </a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-13T00:00:00+08:00">
+                2017-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/blog/了解etcd.html" class="leancloud_visitors" data-flag-title="了解etcd">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="说明">说明</h2>
+<p>这是一篇非常入门的文章，让你大概了解一下etcd。写这篇文章时使用etcd的版本是3.1.0。<br>
+etcd是以实现共享配置和服务发现为目的，提供一致性的键值存储的分布式数据库。kubernetes等项目使用了etcd。</p>
+<h2 id="下载安装">下载安装</h2>
+<p>去<a href="https://github.com/coreos/etcd/releases" target="_blank" rel="noopener">这里</a>下载release包，解压后是一些文档和两个二进制文件etcd和etcdctl。etcd是server端，etcdctl是客户端。将etcd和etcdctl加入PATH路径方便我们执行命令。</p>
+<h2 id="运行server">运行server</h2>
+<p>执行命令etcd，即可启动server</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcd</span><br><span class="line">2017-02-14 14:04:40.164639 I | etcdmain: etcd Version: 3.1.0</span><br><span class="line">2017-02-14 14:04:40.164725 I | etcdmain: Git SHA: 8ba2897</span><br><span class="line">2017-02-14 14:04:40.164736 I | etcdmain: Go Version: go1.7.4</span><br><span class="line">2017-02-14 14:04:40.164776 I | etcdmain: Go OS/Arch: linux/amd64</span><br><span class="line">2017-02-14 14:04:40.164784 I | etcdmain: setting maximum number of CPUs to 4, total number of available CPUs is 4</span><br><span class="line">2017-02-14 14:04:40.164850 W | etcdmain: no data-dir provided, using default data-dir ./default.etcd</span><br><span class="line">2017-02-14 14:04:40.164934 I | etcdmain: advertising using detected default host &quot;192.168.1.124&quot;</span><br><span class="line">2017-02-14 14:04:40.165855 I | embed: listening for peers on http://localhost:2380</span><br><span class="line">2017-02-14 14:04:40.167090 I | embed: listening for client requests on localhost:2379</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<h2 id="etcdctl">etcdctl</h2>
+<p>说明：etcd最新的API版本是v3。与v2相比，v3更高效更清晰。设置环境变量ETCDCTL_API=3。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ export ETCDCTL_API=3</span><br><span class="line">ming@ming:/tmp$ etcdctl version</span><br><span class="line">etcdctl version: 3.1.0</span><br><span class="line">API version: 3.1</span><br></pre></td></tr></table></figure>
+<h3 id="键值对命令">键值对命令</h3>
+<p><code>put</code>设置key，<code>get</code>取得key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcdctl put msg &quot;Hello TenxCloud&quot;</span><br><span class="line">OK</span><br><span class="line">ming@ming:/tmp$ etcdctl get msg  </span><br><span class="line">msg</span><br><span class="line">Hello TenxCloud</span><br></pre></td></tr></table></figure>
+<p><code>del</code>删除key</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ming@ming:/tmp$ etcdctl get msg  </span><br><span class="line">msg</span><br><span class="line">Hello TenxCloud</span><br><span class="line">ming@ming:/tmp$ etcdctl del msg</span><br><span class="line">1</span><br><span class="line">ming@ming:/tmp$ etcdctl get msg</span><br><span class="line">ming@ming:/tmp$</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/blog/了解etcd.html#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1693,7 +1693,7 @@ etcd是以实现共享配置和服务发现为目的，提供一致性的键值�
         <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-gamepad"></i>
   </span>
